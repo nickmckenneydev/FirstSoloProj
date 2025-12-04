@@ -1,0 +1,6 @@
+build/
+src/KHR
+src/glad.c
+src/glad.h
+CMakeLists.txt
+.vscode
