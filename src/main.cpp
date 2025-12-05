@@ -10,6 +10,15 @@ GLfloat vertices[] = {
     0.0f,0.5f,0.0f
 
 };
+std::string vertexShaderString = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";
+
+const char* vertexShaderSource = vertexShaderString.c_str();
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -47,7 +56,8 @@ int main()
 
     GLuint VBO;
     glGenBuffers(1,&VBO);//generates buffer ID
-
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);//Buffer type of VBO. Any calls to GL_ARRAY_BUFFER will be towards VBO
+    glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);//copies into buffer memory
     while (!glfwWindowShouldClose(window)){//Render Loop. Each time its one frame
         processInput(window);
             glClear(GL_COLOR_BUFFER_BIT);
