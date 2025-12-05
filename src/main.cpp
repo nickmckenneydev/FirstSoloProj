@@ -2,6 +2,9 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 // settings
+int  success;
+char infoLog[512];
+
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 GLfloat vertices[] = {
@@ -58,6 +61,12 @@ int main()
     glGenBuffers(1,&VBO);//generates buffer ID
     glBindBuffer(GL_ARRAY_BUFFER,VBO);//Buffer type of VBO. Any calls to GL_ARRAY_BUFFER will be towards VBO
     glBufferData(GL_ARRAY_BUFFER,sizeof(vertices),vertices,GL_STATIC_DRAW);//copies into buffer memory
+
+    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader,1,&vertexShaderSource,NULL);
+    glCompileShader(vertexShader);
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
     while (!glfwWindowShouldClose(window)){//Render Loop. Each time its one frame
         processInput(window);
             glClear(GL_COLOR_BUFFER_BIT);
