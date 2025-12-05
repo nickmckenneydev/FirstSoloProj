@@ -67,6 +67,14 @@ int main()
     glCompileShader(vertexShader);
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 
+    
+
+    if(!success)
+    {
+        glGetShaderInfoLog(vertexShader,512,NULL,infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+
+    }
     while (!glfwWindowShouldClose(window)){//Render Loop. Each time its one frame
         processInput(window);
             glClear(GL_COLOR_BUFFER_BIT);
