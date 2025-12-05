@@ -22,7 +22,14 @@ std::string vertexShaderString = "#version 330 core\n"
 
 const char* vertexShaderSource = vertexShaderString.c_str();
 
+std::string fragmentShaderString = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);n"
+    "}\0";
 
+const char* fragmentShaderSource = fragmentShaderString.c_str();
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width and 
@@ -67,14 +74,24 @@ int main()
     glCompileShader(vertexShader);
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 
-    
-
     if(!success)
     {
         glGetShaderInfoLog(vertexShader,512,NULL,infoLog);
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 
     }
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader,1,&fragmentShaderSource,NULL);
+    glCompileShader(fragmentShader);
+
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if(!success)
+    {
+        glGetShaderInfoLog(fragmentShader,512,NULL,infoLog);
+        std::cout << "ERROR::SHADER::Fragment::COMPILATION_FAILED\n" << infoLog << std::endl;
+
+    }
+
     while (!glfwWindowShouldClose(window)){//Render Loop. Each time its one frame
         processInput(window);
             glClear(GL_COLOR_BUFFER_BIT);
