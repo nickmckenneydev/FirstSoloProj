@@ -104,7 +104,7 @@ int main()
          0.5f, -0.5f, 0.0f, // right 
          0.0f,  0.5f, 0.0f  // top   
     }; 
-
+//test
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
