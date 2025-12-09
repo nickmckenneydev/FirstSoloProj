@@ -50,13 +50,13 @@ int main()
 
     // build and compile our shader zprogram
     // ------------------------------------
-    Shader ourShader("/home/a/Desktop/FirstSoloProj/src/shaders/shader.frag", "4.1.texture.fs"); 
+    Shader ourShader("/home/a/Desktop/FirstSoloProj/src/shaders/shader.vert", "/home/a/Desktop/FirstSoloProj/src/shaders/shader.frag"); 
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions          // colors           // texture coords
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top rights
+         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
          0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
         -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
         -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
@@ -103,7 +103,7 @@ int main()
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
     // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    unsigned char *data = stbi_load(std::filesystem::path("container.jpg").c_str(), &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(std::filesystem::path("/home/a/Desktop/FirstSoloProj/src/container.jpg").c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
