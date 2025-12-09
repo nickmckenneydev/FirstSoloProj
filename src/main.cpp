@@ -115,9 +115,6 @@ int main()
     }
     stbi_image_free(data);
 
-
-    // render loop
-    // -----------
     while (!glfwWindowShouldClose(window))
     {
         // input
