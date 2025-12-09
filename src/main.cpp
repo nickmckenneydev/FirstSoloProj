@@ -1,3 +1,4 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include "glad.h"
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
@@ -49,7 +50,7 @@ int main()
 
     // build and compile our shader zprogram
     // ------------------------------------
-    Shader ourShader("4.1.texture.vs", "4.1.texture.fs"); 
+    Shader ourShader("/home/a/Desktop/FirstSoloProj/src/shaders/shader.frag", "4.1.texture.fs"); 
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
