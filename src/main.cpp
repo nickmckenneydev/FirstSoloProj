@@ -116,7 +116,7 @@ int main()
     {
         std::cout << "Failed to load texture" << std::endl;
     }
-
+sss
 
     glGenTextures(1,&texture2);
     glBindTexture(GL_TEXTURE_2D,texture2);
