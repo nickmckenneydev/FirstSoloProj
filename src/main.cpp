@@ -4,6 +4,10 @@
 #include "stb_image.h"
 
 #include "shader.h"
+#include "glm/vec3.hpp"
+#include "glm/vec4.hpp"// glm::vec4
+#include "glm/mat4x4.hpp" // glm::mat4
+#include "glm/gtc/matrix_transform.hpp"
 
 #include <iostream>
 #include <filesystem>
@@ -116,7 +120,7 @@ int main()
     {
         std::cout << "Failed to load texture" << std::endl;
     }
-sss
+
 
     glGenTextures(1,&texture2);
     glBindTexture(GL_TEXTURE_2D,texture2);
