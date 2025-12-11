@@ -22,15 +22,13 @@ const unsigned int SCR_HEIGHT = 600;
 int main()
 {
     //glm stuff
-    glm::vec4 vec(1.0f,0.0f,0.0f,1.0f);
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::translate(trans,glm::vec3(1.0f,1.0f,0.0f));
-    vec = trans * vec;
-    std::cout << vec.x <<","<< vec.y << vec.z << std::endl;
+  
+    // glm::mat4 trans = glm::mat4(1.0f);
+ 
 
-    trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans,glm::radians(90.0f),glm::vec3(0.0,0.0,1.0));
-    trans = glm::scale(trans,glm::vec3(0.5,0.5,0.5));
+  
+    // trans = glm::rotate(trans,glm::radians(90.0f),glm::vec3(0.0,0.0,1.0));
+    // trans = glm::scale(trans,glm::vec3(0.5,0.5,0.5));
     //end of glm stuff
     // glfw: initialize and configure
     // ------------------------------
@@ -158,8 +156,10 @@ int main()
     stbi_image_free(data);
     ourShader.use(); // don't forget to activate/use the shader before setting uniforms!
     // either set it manually like so:
+    glm::mat4 trans = glm::mat4(1.0f);
+
     glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
-    glUniformMatrix4fv(glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
+    
     // or set it via the texture class
     ourShader.setInt("texture2", 1);
 
@@ -179,7 +179,10 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
-        
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = glm::translate(trans, glm::vec3(0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+        glUniformMatrix4fv(glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
         // render container
         ourShader.use();
         glBindVertexArray(VAO);
