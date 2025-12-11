@@ -8,7 +8,7 @@
 #include "glm/vec4.hpp"// glm::vec4
 #include "glm/mat4x4.hpp" // glm::mat4
 #include "glm/gtc/matrix_transform.hpp"
-
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <filesystem>
 namespace fs = std::filesystem;
@@ -28,7 +28,7 @@ int main()
     vec = trans * vec;
     std::cout << vec.x <<","<< vec.y << vec.z << std::endl;
 
-    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::mat4(1.0f);
     trans = glm::rotate(trans,glm::radians(90.0f),glm::vec3(0.0,0.0,1.0));
     trans = glm::scale(trans,glm::vec3(0.5,0.5,0.5));
     //end of glm stuff
@@ -96,12 +96,11 @@ int main()
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+   
+ 
     // texture coord attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
 
     // load and create a texture 
@@ -160,6 +159,7 @@ int main()
     ourShader.use(); // don't forget to activate/use the shader before setting uniforms!
     // either set it manually like so:
     glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
+    glUniformMatrix4fv(glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
     // or set it via the texture class
     ourShader.setInt("texture2", 1);
 
