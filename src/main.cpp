@@ -126,33 +126,21 @@ glm::vec3 cubePositions[] = {
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-
-
     glBindVertexArray(VAO);
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-
-
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-   
- 
     // texture coord attribute
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-
-
     // load and create a texture 
     // -------------------------
     unsigned int texture1,texture2;
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     
-
-
     // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -172,8 +160,6 @@ glm::vec3 cubePositions[] = {
     {
         std::cout << "Failed to load texture" << std::endl;
     }
-
-
     glGenTextures(1,&texture2);
     glBindTexture(GL_TEXTURE_2D,texture2);
     // set the texture wrapping parameters
@@ -186,17 +172,13 @@ glm::vec3 cubePositions[] = {
     data=stbi_load(std::filesystem::path("/home/a/Desktop/FirstSoloProj/src/awesomeface.png").c_str(), &width, &height, &nrChannels, 0);
     if (data)
     {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    glGenerateMipmap(GL_TEXTURE_2D);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
     {
         std::cout << "Failed to load texture" << std::endl;
     }
-
-
-
-    
     stbi_image_free(data);
     ourShader.use(); // don't forget to activate/use the shader before setting uniforms!
     // either set it manually like so:
@@ -207,29 +189,37 @@ glm::vec3 cubePositions[] = {
     // or set it via the texture class
     ourShader.setInt("texture2", 1);
     // bind textures on corresponding texture units
-   glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
-glEnable(GL_DEPTH_TEST);  
-        glm::mat4 view          = glm::mat4(1.0f);
-                view  = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-         unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
-                glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture1);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+    glEnable(GL_DEPTH_TEST);  
+    glm::mat4 view = glm::mat4(1.0f);
 
-        glm::mat4 projection    = glm::mat4(1.0f);
+    glm::mat4 projection    = glm::mat4(1.0f);
+    projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    ourShader.setMat4("projection", projection);
+    
 
-projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        ourShader.setMat4("projection", projection);
-        
+    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);  
+
+
+    glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+    glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
+
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); 
+    glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+
+    glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+   
+    view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), 
+            glm::vec3(0.0f, 0.0f, 0.0f), 
+            glm::vec3(0.0f, 1.0f, 0.0f));
+    unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
+    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
   while (!glfwWindowShouldClose(window))
     {
-        // input
-        // -----
         processInput(window);
-
-        // render
-        // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
@@ -239,8 +229,8 @@ projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
-        // activate shader
         ourShader.use();
+    
         for(int i=0; i<10;i++){
         // create transformations
         glm::mat4 model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
@@ -252,18 +242,14 @@ projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR
        
         // pass them to the shaders (3 different ways)
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-         glBindVertexArray(VAO);
+        glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-        // note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
-        
+        const float radius = 10.0f;
+        float camX = sin(glfwGetTime()) * radius;
+        float camZ = cos(glfwGetTime()) * radius;
+        view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));  
 
-        // render box
-       
-
-
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
