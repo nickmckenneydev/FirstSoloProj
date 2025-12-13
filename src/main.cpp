@@ -216,7 +216,6 @@ glm::vec3 cubePositions[] = {
             glm::vec3(0.0f, 0.0f, 0.0f), 
             glm::vec3(0.0f, 1.0f, 0.0f));
     unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
-    glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
   while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -231,24 +230,23 @@ glm::vec3 cubePositions[] = {
 
         ourShader.use();
     
-        for(int i=0; i<10;i++){
-        // create transformations
-        glm::mat4 model         = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
+        for(int i=0; i<10;i++)
+        {
+        glm::mat4 model = glm::mat4(1.0f); // make sure to initialize matrix to identity matrix first
         model = glm::translate(model,cubePositions[i]);
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-
-        // retrieve the matrix uniform locations
         unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
-       
-        // pass them to the shaders (3 different ways)
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         }
+
         const float radius = 10.0f;
         float camX = sin(glfwGetTime()) * radius;
         float camZ = cos(glfwGetTime()) * radius;
+        glm::mat4 view;
         view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));  
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
