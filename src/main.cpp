@@ -19,6 +19,10 @@ void processInput(GLFWwindow *window);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+
 int main()
 {
     //glm stuff
@@ -201,7 +205,7 @@ glm::vec3 cubePositions[] = {
     ourShader.setMat4("projection", projection);
     
 
-    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);  
+    cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);  
 
 
     glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -210,19 +214,25 @@ glm::vec3 cubePositions[] = {
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); 
     glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
 
-    glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+    cameraUp = glm::cross(cameraDirection, cameraRight);
    
-    view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f), 
-            glm::vec3(0.0f, 0.0f, 0.0f), 
-            glm::vec3(0.0f, 1.0f, 0.0f));
+
+    cameraPos = glm::vec3(0.0f,0.0f,3.0f);
+    cameraFront = glm::vec3(0.0f,0.0f,-1.0f);
+    cameraUp = glm::vec3(0.0f,1.0f,0.0f);
+
+    
+   
     unsigned int viewLoc  = glGetUniformLocation(ourShader.ID, "view");
-            // bind textures on corresponding texture units
+    // bind textures on corresponding texture units
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
     ourShader.use();
     unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
+
+
 
   while (!glfwWindowShouldClose(window))
     {
@@ -242,8 +252,9 @@ glm::vec3 cubePositions[] = {
         const float radius = 10.0f;
         float camX = sin(glfwGetTime()) * radius;
         float camZ = cos(glfwGetTime()) * radius;
-        glm::mat4 view;
-        view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));  
+        
+         
+        view = glm::lookAt(glm::vec3(camX, 0.0, camZ)+cameraPos, cameraPos + cameraFront, cameraUp);  
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
 
         glfwSwapBuffers(window);
@@ -265,9 +276,22 @@ glm::vec3 cubePositions[] = {
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow *window)
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
         glfwSetWindowShouldClose(window, true);
+    }
+   
+     const float cameraSpeed = 0.05f; // adjust accordingly
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        
 }
+
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
