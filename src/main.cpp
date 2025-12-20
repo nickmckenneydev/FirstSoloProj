@@ -33,7 +33,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+glm::vec3 lightPos(0.0f, 0.0f, 2.0f);
 
 int main()
 {
@@ -150,8 +150,8 @@ int main()
     unsigned int lightCubeVAO;
     glGenVertexArrays(1, &lightCubeVAO);
     glBindVertexArray(lightCubeVAO);
-
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    
     // note that we update the lamp's position attribute's stride to reflect the updated buffer data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -159,11 +159,17 @@ int main()
 
     // render loop
     // -----------
+   
     while (!glfwWindowShouldClose(window))
     {
         // per-frame time logic
         // --------------------
         float currentFrame = static_cast<float>(glfwGetTime());
+        glm::vec3 currentLightPos;
+        currentLightPos.x = lightPos.x + sin(currentFrame * 3.0f) * 3.0f;
+        currentLightPos.z = lightPos.z + cos(currentFrame * 3.0f) * 3.0f;
+        currentLightPos.y = lightPos.y;
+
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
@@ -172,15 +178,16 @@ int main()
         processInput(window);
 
         // render
-        // ------
+        // ------fr
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // be sure to activate shader when setting uniforms/drawing objects
-        lightingShader.use();
-        lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+        glUseProgram(lightingShader.ID); 
+        glUniform3f(glGetUniformLocation(lightingShader.ID, "objectColor"), 1.0f, 0.5f, 0.31f); 
+
         lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        lightingShader.setVec3("lightPos", lightPos);
+        glUniform3fv(glGetUniformLocation(lightingShader.ID, "lightPos"), 1, &currentLightPos[0]); 
         lightingShader.setVec3("viewPos", camera.Position);
 
         // view/projection transformations
@@ -191,8 +198,7 @@ int main()
 
         // world transformation
         glm::mat4 model = glm::mat4(1.0f);
-        lightingShader.setMat4("model", model);
-
+        glUniformMatrix4fv(glGetUniformLocation(lightingShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
         // render the cube
         glBindVertexArray(cubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -200,16 +206,21 @@ int main()
 
         // also draw the lamp object
         lightCubeShader.use();
-        lightCubeShader.setMat4("projection", projection);
-        lightCubeShader.setMat4("view", view);
-        model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos);
-        model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-        lightCubeShader.setMat4("model", model);
+        glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
 
+        //lamp object
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, lightPos); 
+        model = glm::rotate(model, currentFrame*3.0f, glm::vec3(0.0f, 1.0f, 0.0f)); // 2. Rotate
+        model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f)); // 1. Offset from center
+        
+        model = glm::scale(model, glm::vec3(0.5f));
+        
+
+        glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glBindVertexArray(lightCubeVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
