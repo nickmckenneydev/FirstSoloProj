@@ -33,7 +33,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(0.0f, 0.0f, 2.0f);
+// glm::vec3 lightPos(0.0f, 0.0f, 2.0f);
 
 int main()
 {
@@ -166,9 +166,9 @@ int main()
         // --------------------
         float currentFrame = static_cast<float>(glfwGetTime());
         glm::vec3 currentLightPos;
-        currentLightPos.x = lightPos.x + sin(currentFrame * 3.0f) * 3.0f;
-        currentLightPos.z = lightPos.z + cos(currentFrame * 3.0f) * 3.0f;
-        currentLightPos.y = lightPos.y;
+        currentLightPos.x =  sin(currentFrame * 3.0f) * 3.0f;
+        currentLightPos.z = cos(currentFrame * 3.0f) * 3.0f;
+        currentLightPos.y = 0;
 
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
@@ -187,8 +187,7 @@ int main()
         glUniform3f(glGetUniformLocation(lightingShader.ID, "objectColor"), 1.0f, 0.5f, 0.31f); 
 
         lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-        glUniform3fv(glGetUniformLocation(lightingShader.ID, "lightPos"), 1, &currentLightPos[0]); 
-        lightingShader.setVec3("viewPos", camera.Position);
+        glUniform3fv(glGetUniformLocation(lightingShader.ID, "currentLightPos"), 1, &currentLightPos[0]); 
 
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -209,14 +208,18 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
 
-        //lamp object
+        //Mercury
         model = glm::mat4(1.0f);
-        model = glm::translate(model, lightPos); 
+
+        model = glm::translate(model, currentLightPos); 
+        model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); // 1. Offset from center
+
         model = glm::rotate(model, currentFrame*3.0f, glm::vec3(0.0f, 1.0f, 0.0f)); // 2. Rotate
-        model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f)); // 1. Offset from center
-        
+
         model = glm::scale(model, glm::vec3(0.5f));
         
+
+
 
         glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glBindVertexArray(lightCubeVAO);
