@@ -23,7 +23,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 2.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -166,8 +166,8 @@ int main()
         // --------------------
         float currentFrame = static_cast<float>(glfwGetTime());
         glm::vec3 currentLightPos;
-        currentLightPos.x =  sin(currentFrame * 3.0f) * 3.0f;
-        currentLightPos.z = cos(currentFrame * 3.0f) * 3.0f;
+        currentLightPos.x =  sin(currentFrame);
+        currentLightPos.z = cos(currentFrame);
         currentLightPos.y = 0;
 
         deltaTime = currentFrame - lastFrame;
@@ -209,14 +209,19 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
 
         //Mercury
-        model = glm::mat4(1.0f);
 
-        model = glm::translate(model, currentLightPos); 
-        model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); // 1. Offset from center
 
-        model = glm::rotate(model, currentFrame*3.0f, glm::vec3(0.0f, 1.0f, 0.0f)); // 2. Rotate
 
-        model = glm::scale(model, glm::vec3(0.5f));
+
+         model = glm::mat4(1.0f);
+// Orbit rotation (Y-axis)
+model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+// Distance from center
+model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); 
+// Size of the orbiting cube
+model = glm::scale(model, glm::vec3(0.2f));
+
+lightCubeShader.setMat4("model", model);
         
 
 
