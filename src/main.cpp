@@ -51,8 +51,8 @@ std::cout << "Failed to initialize GLAD" << std::endl;
 return -1;
 }
 glEnable(GL_DEPTH_TEST);
-Shader basic_lighting("/home/a/Desktop/FirstSoloProj/src/shaders/basic_lighting.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/basic_lighting.fs");
-Shader light_cube("/home/a/Desktop/FirstSoloProj/src/shaders/light_cube.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/light_cube.fs");
+Shader planets("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/planets.fs");
+Shader sun("/home/a/Desktop/FirstSoloProj/src/shaders/sun.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/sun.fs");
   float vertices[] = {
     // Positions          // Normals           // Texture Coords
     // Back face
@@ -103,31 +103,23 @@ Shader light_cube("/home/a/Desktop/FirstSoloProj/src/shaders/light_cube.vs", "/h
     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
-//Configure the cube's VAO (and VBO)
-unsigned int VBO, cubeVAO;
-glGenVertexArrays(1, &cubeVAO);
-glGenBuffers(1, &VBO);
-
+unsigned int VBO,SunVAO;
+glGenVertexArrays(1, &SunVAO);
+glGenBuffers(1,&VBO);
+glBindVertexArray(SunVAO);
 glBindBuffer(GL_ARRAY_BUFFER, VBO);
 glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-glBindVertexArray(cubeVAO);
-
 // position attribute
 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 glEnableVertexAttribArray(0);
-
 // normal attribute
 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 glEnableVertexAttribArray(1);
-
 // texture attribute
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 glEnableVertexAttribArray(2);
 
-unsigned int lightCubeVAO;
-glGenVertexArrays(1, &lightCubeVAO);
-glBindVertexArray(lightCubeVAO);
-glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
 
 //update lightCube position attribute stride due to updated buffer data
 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
@@ -143,21 +135,16 @@ glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 int width, height, nrChannels;
-unsigned char *data = stbi_load("/home/a/Desktop/FirstSoloProj/src/mercury.jpeg", &width, &height, &nrChannels, 0);
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+unsigned char *data = stbi_load("/home/a/Desktop/FirstSoloProj/src/sun.png", &width, &height, &nrChannels, 0);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 glGenerateMipmap(GL_TEXTURE_2D);
 stbi_image_free(data);
 
-glEnable(GL_DEPTH_TEST|GL_CULL_FACE);
+glEnable(GL_DEPTH_TEST);
 while (!glfwWindowShouldClose(window))
 {
-
 float currentFrame = static_cast<float>(glfwGetTime());
-glm::vec3 currentLightPos;
-currentLightPos.x =  sin(currentFrame);
-currentLightPos.z = cos(currentFrame);
-currentLightPos.y = 0;
-
+glm::vec3 LightPos = glm::vec3(0.0f,0.0f,0.0f);
 deltaTime = currentFrame - lastFrame;
 lastFrame = currentFrame;
 
@@ -166,51 +153,38 @@ processInput(window);
 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-// be sure to activate shader when setting uniforms/drawing objects
-glUseProgram(basic_lighting.ID); 
-glUniform3f(glGetUniformLocation(basic_lighting.ID, "objectColor"), 1.0f, 0.5f, 0.31f); 
+//activate shader when setting uniforms/drawing objects
+glUseProgram(sun.ID); 
 
-basic_lighting.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
-glUniform3fv(glGetUniformLocation(basic_lighting.ID, "currentLightPos"), 1, &currentLightPos[0]); 
+glUseProgram(sun.ID);
+glActiveTexture(GL_TEXTURE0); // Tell OpenGL we are using slot 0
+glBindTexture(GL_TEXTURE_2D, texture);
+glUniform1i(glGetUniformLocation(sun.ID, "sunTexture"), 0);
+glUniform3f(glGetUniformLocation(sun.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
+glUniform3f(glGetUniformLocation(sun.ID, "lightColor"), 1, 1, 1); 
+glUniform3fv(glGetUniformLocation(sun.ID, "LightPos"), 1, &LightPos[0]); 
 
 // view/projection transformations
 glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 glm::mat4 view = camera.GetViewMatrix();
-basic_lighting.setMat4("projection", projection);
-basic_lighting.setMat4("view", view);
+glUniformMatrix4fv(glGetUniformLocation(sun.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
+glUniformMatrix4fv(glGetUniformLocation(sun.ID, "view"), 1, GL_FALSE, &view[0][0]);
 
 // world transformation
 glm::mat4 model = glm::mat4(1.0f);
-glUniformMatrix4fv(glGetUniformLocation(basic_lighting.ID, "model"), 1, GL_FALSE, &model[0][0]);
-// render the cube
-glBindVertexArray(cubeVAO);
-glDrawArrays(GL_TRIANGLES, 0, 36);
-// also draw the lamp object
-light_cube.use();
+glUniformMatrix4fv(glGetUniformLocation(sun.ID, "model"), 1, GL_FALSE, &model[0][0]);
+// render the SUN
+glBindVertexArray(SunVAO);
 glBindTexture(GL_TEXTURE_2D, texture);
-
-glUniformMatrix4fv(glGetUniformLocation(light_cube.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-glUniformMatrix4fv(glGetUniformLocation(light_cube.ID, "view"), 1, GL_FALSE, &view[0][0]);
-
-//Mercury
-model = glm::mat4(1.0f);
-// Orbit rotation (Y-axis)
-model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
-// Distance from center
-model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f)); 
-// Size of the orbiting cube
-model = glm::scale(model, glm::vec3(0.2f));
-
-light_cube.setMat4("model", model);
-glUniformMatrix4fv(glGetUniformLocation(light_cube.ID, "model"), 1, GL_FALSE, &model[0][0]);
-glBindVertexArray(lightCubeVAO);
 glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+
 
 glfwSwapBuffers(window);
 glfwPollEvents();
 }
-glDeleteVertexArrays(1, &cubeVAO);
-glDeleteVertexArrays(1, &lightCubeVAO);
+glDeleteVertexArrays(1, &SunVAO);
 glDeleteBuffers(1, &VBO);
 
 glfwTerminate();
