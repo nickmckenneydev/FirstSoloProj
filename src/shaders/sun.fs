@@ -8,6 +8,5 @@ uniform vec3 objectColor; // Added this declaration!
 
 void main()
 {
-    // Now the shader knows what objectColor is
     FragColor = texture(sunTexture, TexCoord) * vec4(objectColor, 1.0);
 }
