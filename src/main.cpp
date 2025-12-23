@@ -241,7 +241,7 @@ model = glm::mat4(1.0f);
 model = glm::rotate(model, (float)glfwGetTime()*glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
 
 model = glm::translate(model, glm::vec3(7.0f, 0.0f, 0.0f));
-model = glm::rotate(model, (float)glfwGetTime()*1.0f, glm::vec3(0.0, 1.0, 0.0));
+model = glm::rotate(model, (float)glfwGetTime()*5.0f, glm::vec3(0.0, 1.0, 0.0));
 
 model = glm::scale(model, glm::vec3(0.6f)); // a smaller cube
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
