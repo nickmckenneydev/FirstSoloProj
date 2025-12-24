@@ -26,7 +26,8 @@ float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
 float deltaTime = 0.0f;	
 float lastFrame = 0.0f;
-
+GLint success;
+char infoLog[512];
 int main()
 {
 glfwInit();
@@ -53,6 +54,7 @@ return -1;
 glEnable(GL_DEPTH_TEST);
 Shader planets("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/planets.fs");
 Shader sun("/home/a/Desktop/FirstSoloProj/src/shaders/sun.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/sun.fs");
+
 float vertices[] = {
     // Positions          // Normals           // Texture Coords
     // Back face
@@ -206,12 +208,18 @@ glDrawArrays(GL_TRIANGLES, 0, 36);
 glUseProgram(planets.ID); 
 glBindTexture(GL_TEXTURE_2D, mercuryTextureImage);
 glUniform1i(glGetUniformLocation(planets.ID, "planetTexture"), 0);
-glUniform3f(glGetUniformLocation(planets.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
 glUniform3f(glGetUniformLocation(planets.ID, "lightColor"), 1, 1, 1); 
+
+
+glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f); 
+glUniform3f(glGetUniformLocation(planets.ID, "material.diffuse"), 1.0f, 0.5f, 0.31f); 
+glUniform3f(glGetUniformLocation(planets.ID, "material.specular"), 0.5f, 0.5f, 0.5f); 
+glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 32.0f); 
 
 glUniform3fv(glGetUniformLocation(planets.ID, "LightPos"), 1, &LightPos[0]); 
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
+glUniform3fv(glGetUniformLocation(planets.ID, "viewPos"), 1,  &camera.Position[0]); 
 
 model = glm::mat4(1.0f);
 model = glm::rotate(model, (float)glfwGetTime()*glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -224,18 +232,23 @@ glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &mode
 
 // render the Venus Planet
 glBindVertexArray(PlanetsVAO);
-glBindTexture(GL_TEXTURE_2D, mercuryTextureImage);
 glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
 glBindTexture(GL_TEXTURE_2D, venusTextureImage);
 glUniform1i(glGetUniformLocation(planets.ID, "planetTexture"), 0);
-glUniform3f(glGetUniformLocation(planets.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
 glUniform3f(glGetUniformLocation(planets.ID, "lightColor"), 1, 1, 1); 
+
+
+glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f); 
+glUniform3f(glGetUniformLocation(planets.ID, "material.diffuse"), 1.0f, 0.5f, 0.31f); 
+glUniform3f(glGetUniformLocation(planets.ID, "material.specular"), 0.5f, 0.5f, 0.5f); 
+glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 32.0f); 
 
 glUniform3fv(glGetUniformLocation(planets.ID, "LightPos"), 1, &LightPos[0]); 
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
+glUniform3fv(glGetUniformLocation(planets.ID, "viewPos"), 1,  &camera.Position[0]); 
 
 model = glm::mat4(1.0f);
 model = glm::rotate(model, (float)glfwGetTime()*glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -248,7 +261,6 @@ glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &mode
 
 // render the Venus Planet
 glBindVertexArray(PlanetsVAO);
-glBindTexture(GL_TEXTURE_2D, venusTextureImage);
 glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
