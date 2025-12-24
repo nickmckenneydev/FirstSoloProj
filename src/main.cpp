@@ -175,7 +175,15 @@ float currentFrame = static_cast<float>(glfwGetTime());
 glm::vec3 LightPos = glm::vec3(0.0f,0.0f,0.0f);
 deltaTime = currentFrame - lastFrame;
 lastFrame = currentFrame;
-
+glm::vec3 lightColor;
+lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
+lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
+lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
+glm::vec3 diffuseColor = lightColor   * glm::vec3(0.5f); // decrease the influence
+glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f); // low influence
+planets.setVec3("light.ambient", ambientColor);
+planets.setVec3("light.diffuse", diffuseColor);
+planets.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 processInput(window);
 
 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -205,7 +213,7 @@ glDrawArrays(GL_TRIANGLES, 0, 36);
 
 //Planets
 glUseProgram(planets.ID);
-glUniform3fv(glGetUniformLocation(planets.ID, "viewPos"), 1,  &camera.Position[0]); 
+glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
 glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f);
 glUniform3f(glGetUniformLocation(planets.ID, "lightColor"), 1, 1, 1); 
 glUniform3fv(glGetUniformLocation(planets.ID, "LightPos"), 1, &LightPos[0]); 
