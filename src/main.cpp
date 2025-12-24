@@ -203,23 +203,22 @@ glBindVertexArray(SunVAO);
 glBindTexture(GL_TEXTURE_2D, sunTextureImage);
 glDrawArrays(GL_TRIANGLES, 0, 36);
 
-
+//Planets
+glUseProgram(planets.ID);
+glUniform3fv(glGetUniformLocation(planets.ID, "viewPos"), 1,  &camera.Position[0]); 
+glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f);
+glUniform3f(glGetUniformLocation(planets.ID, "lightColor"), 1, 1, 1); 
+glUniform3fv(glGetUniformLocation(planets.ID, "LightPos"), 1, &LightPos[0]); 
 // //Mercury
-glUseProgram(planets.ID); 
 glBindTexture(GL_TEXTURE_2D, mercuryTextureImage);
 glUniform1i(glGetUniformLocation(planets.ID, "planetTexture"), 0);
-glUniform3f(glGetUniformLocation(planets.ID, "lightColor"), 1, 1, 1); 
 
 
 glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f); 
 glUniform3f(glGetUniformLocation(planets.ID, "material.diffuse"), 1.0f, 0.5f, 0.31f); 
 glUniform3f(glGetUniformLocation(planets.ID, "material.specular"), 0.5f, 0.5f, 0.5f); 
 glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 32.0f); 
-
-glUniform3fv(glGetUniformLocation(planets.ID, "LightPos"), 1, &LightPos[0]); 
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
-glUniform3fv(glGetUniformLocation(planets.ID, "viewPos"), 1,  &camera.Position[0]); 
 
 model = glm::mat4(1.0f);
 model = glm::rotate(model, (float)glfwGetTime()*glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -237,18 +236,10 @@ glDrawArrays(GL_TRIANGLES, 0, 36);
 
 glBindTexture(GL_TEXTURE_2D, venusTextureImage);
 glUniform1i(glGetUniformLocation(planets.ID, "planetTexture"), 0);
-glUniform3f(glGetUniformLocation(planets.ID, "lightColor"), 1, 1, 1); 
-
-
-glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f); 
 glUniform3f(glGetUniformLocation(planets.ID, "material.diffuse"), 1.0f, 0.5f, 0.31f); 
 glUniform3f(glGetUniformLocation(planets.ID, "material.specular"), 0.5f, 0.5f, 0.5f); 
 glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 32.0f); 
-
-glUniform3fv(glGetUniformLocation(planets.ID, "LightPos"), 1, &LightPos[0]); 
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
-glUniform3fv(glGetUniformLocation(planets.ID, "viewPos"), 1,  &camera.Position[0]); 
 
 model = glm::mat4(1.0f);
 model = glm::rotate(model, (float)glfwGetTime()*glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
