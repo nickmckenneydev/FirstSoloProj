@@ -151,6 +151,9 @@ glEnableVertexAttribArray(1);
 // texture attribute
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 glEnableVertexAttribArray(2);
+
+
+
 //Planets Texture
 //Mercury
 unsigned int mercuryTextureImage;
@@ -169,13 +172,15 @@ glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYT
 glGenerateMipmap(GL_TEXTURE_2D);
 stbi_image_free(data);
 glEnable(GL_DEPTH_TEST);
+glm::vec3 lightColor;
+
 while (!glfwWindowShouldClose(window))
 {
+    glm::vec3 LightPos = glm::vec3(0.0f,0.0f,0.0f);
+
 float currentFrame = static_cast<float>(glfwGetTime());
-glm::vec3 LightPos = glm::vec3(0.0f,0.0f,0.0f);
 deltaTime = currentFrame - lastFrame;
 lastFrame = currentFrame;
-glm::vec3 lightColor;
 lightColor.x = static_cast<float>(sin(glfwGetTime() * 2.0));
 lightColor.y = static_cast<float>(sin(glfwGetTime() * 0.7));
 lightColor.z = static_cast<float>(sin(glfwGetTime() * 1.3));
@@ -196,13 +201,11 @@ glBindTexture(GL_TEXTURE_2D, sunTextureImage);
 glUniform1i(glGetUniformLocation(sun.ID, "sunTexture"), 0);
 glUniform3f(glGetUniformLocation(sun.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
 
-
 // view/projection transformations
 glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 glm::mat4 view = camera.GetViewMatrix();
 glUniformMatrix4fv(glGetUniformLocation(sun.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 glUniformMatrix4fv(glGetUniformLocation(sun.ID, "view"), 1, GL_FALSE, &view[0][0]);
-
 // world transformation
 glm::mat4 model = glm::mat4(1.0f);
 glUniformMatrix4fv(glGetUniformLocation(sun.ID, "model"), 1, GL_FALSE, &model[0][0]);
@@ -216,49 +219,32 @@ glUseProgram(planets.ID);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
 glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f);
 glUniform3f(glGetUniformLocation(planets.ID, "lightColor"), 1, 1, 1); 
-glUniform3fv(glGetUniformLocation(planets.ID, "LightPos"), 1, &LightPos[0]); 
-// //Mercury
-glBindTexture(GL_TEXTURE_2D, mercuryTextureImage);
 glUniform1i(glGetUniformLocation(planets.ID, "planetTexture"), 0);
-
-
-glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f); 
 glUniform3f(glGetUniformLocation(planets.ID, "material.diffuse"), 1.0f, 0.5f, 0.31f); 
+glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f); 
 glUniform3f(glGetUniformLocation(planets.ID, "material.specular"), 0.5f, 0.5f, 0.5f); 
-glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 32.0f); 
+glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 32.0f);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 
+//Mercury
+glBindTexture(GL_TEXTURE_2D, mercuryTextureImage);
 model = glm::mat4(1.0f);
 model = glm::rotate(model, (float)glfwGetTime()*glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
-
 model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
 model = glm::rotate(model, (float)glfwGetTime()*1.0f, glm::vec3(0.0, 1.0, 0.0));
-
 model = glm::scale(model, glm::vec3(0.6f)); // a smaller cube
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-
-// render the Venus Planet
 glBindVertexArray(PlanetsVAO);
 glDrawArrays(GL_TRIANGLES, 0, 36);
 
-
+// render the Venus Planet
 glBindTexture(GL_TEXTURE_2D, venusTextureImage);
-glUniform1i(glGetUniformLocation(planets.ID, "planetTexture"), 0);
-glUniform3f(glGetUniformLocation(planets.ID, "material.diffuse"), 1.0f, 0.5f, 0.31f); 
-glUniform3f(glGetUniformLocation(planets.ID, "material.specular"), 0.5f, 0.5f, 0.5f); 
-glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 32.0f); 
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-
 model = glm::mat4(1.0f);
 model = glm::rotate(model, (float)glfwGetTime()*glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
-
 model = glm::translate(model, glm::vec3(7.0f, 0.0f, 0.0f));
 model = glm::rotate(model, (float)glfwGetTime()*5.0f, glm::vec3(0.0, 1.0, 0.0));
-
 model = glm::scale(model, glm::vec3(0.6f)); // a smaller cube
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-
-// render the Venus Planet
 glBindVertexArray(PlanetsVAO);
 glDrawArrays(GL_TRIANGLES, 0, 36);
 
