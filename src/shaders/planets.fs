@@ -5,11 +5,11 @@ struct Material {
     sampler2D diffuse;
     sampler2D specular;    
     float shininess;
+    vec3 ambient;
 }; 
 
 struct Light {
     vec3 position;
-
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -26,7 +26,7 @@ uniform Light light;
 void main()
 {
     // ambient
-    vec3 ambient = light.ambient * texture(material.diffuse, TexCoords).rgb;
+    vec3 ambient = light.ambient * material.ambient * texture(material.diffuse, TexCoords).rgb;
   	
     // diffuse 
     vec3 norm = normalize(Normal);

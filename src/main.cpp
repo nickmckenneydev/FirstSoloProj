@@ -190,28 +190,25 @@ glDrawArrays(GL_TRIANGLES, 0, 36);
 
 //Planets
 glUseProgram(planets.ID);
-//light properties
-planets.setVec3("light.ambient", 0.2f, 0.2f, 0.2f); 
-planets.setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+
+// Global Material Properties
+planets.setInt("material.diffuse",0);
+planets.setInt("material.specular", 1);
+//light properties Global
+planets.setVec3("light.position", 0.0f, 0.0f, 0.0f);
 planets.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
 //material properties
-planets.setVec3("material.specular", 0.5f, 0.5f, 0.5f);
-planets.setFloat("material.shininess", 64.0f);
-planets.setInt("material.diffuse",0);
-
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 
-glUniform1i(glGetUniformLocation(planets.ID, "planetTexture"), 0);
-glUniform3f(glGetUniformLocation(planets.ID, "material.ambient"),1.0f, 0.5f, 0.31f); 
-
-glUniform1i(glGetUniformLocation(planets.ID, "material.specular"), 1); 
-glActiveTexture(GL_TEXTURE1);
-
-glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 32.0f);
-
 // //Mercury
+// Lighting
+planets.setVec3("light.diffuse", 1.0f, 1.0f, 0.9f); 
+planets.setVec3("light.ambient", 0.05f, 0.05f, 0.05f); 
+// Materials
+planets.setVec3("material.ambient", 0.1f, 0.1f, 0.1f);  
+planets.setFloat("material.shininess", 16.0f);
 // bind diffuse map
 glActiveTexture(GL_TEXTURE0);
 glBindTexture(GL_TEXTURE_2D, MercuryDiffuseMap);
@@ -229,6 +226,12 @@ glBindVertexArray(PlanetsVAO);
 glDrawArrays(GL_TRIANGLES, 0, 36);
 
 // render the Venus Planet
+//Lighting
+planets.setVec3("light.diffuse", 0.7f, 0.6f, 0.4f); 
+planets.setVec3("light.ambient", 0.3f, 0.2f, 0.1f);
+// Materials 
+planets.setVec3("material.ambient", 0.4f, 0.2f, 0.1f);  
+planets.setFloat("material.shininess", 2.0f);
 // bind diffuse map
 glActiveTexture(GL_TEXTURE0);
 glBindTexture(GL_TEXTURE_2D, VenusDiffuseMap);
