@@ -192,9 +192,11 @@ glUseProgram(planets.ID);
 //Global Material Prop
 planets.setInt("material.diffuse",0);
 planets.setInt("material.specular", 1);
+planets.setVec3("viewPos", camera.Position);
 //Light Prop Global
 planets.setVec3("light.position", 0.0f, 0.0f, 0.0f);
 planets.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+planets.setVec3("light.ambient", 0.4f, 0.4f, 0.4f);
 
 //Material Prop
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
@@ -204,10 +206,9 @@ glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, 
 
 // Lighting
 planets.setVec3("light.diffuse", 1.0f, 1.0f, 0.9f); 
-planets.setVec3("light.ambient", 0.05f, 0.05f, 0.05f); 
+
 
 // Materials
-planets.setVec3("material.ambient", 0.1f, 0.1f, 0.1f);  
 planets.setFloat("material.shininess", 16.0f);
 
 // Bind diffuse map
@@ -231,9 +232,9 @@ glDrawArrays(GL_TRIANGLES, 0, 36);
 // Render the Venus Planet
 // Lighting
 planets.setVec3("light.diffuse", 0.7f, 0.6f, 0.4f); 
-planets.setVec3("light.ambient", 0.3f, 0.2f, 0.1f);
+
 // Materials 
-planets.setVec3("material.ambient", 0.4f, 0.2f, 0.1f);  
+
 planets.setFloat("material.shininess", 2.0f);
 // Bind diffuse map
 glActiveTexture(GL_TEXTURE0);
