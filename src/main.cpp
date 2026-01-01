@@ -98,7 +98,7 @@ float vertices[] = {
     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
-    glm::vec3 cubePositions[] = {
+glm::vec3 cubePositions[] = {
         glm::vec3( 0.0f,  0.0f,  0.0f),
         glm::vec3( 2.0f,  5.0f, -15.0f),
         glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -109,7 +109,14 @@ float vertices[] = {
         glm::vec3( 1.5f,  2.0f, -2.5f),
         glm::vec3( 1.5f,  0.2f, -1.5f),
         glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
+};
+
+glm::vec3 pointLightPositions[] = {
+        glm::vec3( 0.7f,  0.2f,  2.0f),
+        glm::vec3( 2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3( 0.0f,  0.0f, -3.0f)
+};
 unsigned int VBO,SunVAO,PlanetsVAO;
 glGenVertexArrays(1, &SunVAO);
 glGenBuffers(1,&VBO);
@@ -201,76 +208,102 @@ glUniformMatrix4fv(glGetUniformLocation(sun.ID, "model"), 1, GL_FALSE, &model[0]
 //Render the Sun
 glBindVertexArray(SunVAO);
 glBindTexture(GL_TEXTURE_2D, sunTextureImage);
-glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-        // be sure to activate shader when setting uniforms/drawing objects
-     
+glDrawArrays(GL_TRIANGLES, 0, 36); 
+// Planets    
 glUseProgram(planets.ID);
 //Global Material Prop
 planets.setInt("material.diffuse",0);
 planets.setInt("material.specular", 1);
-
-planets.setVec3("light.position", camera.Position);
-planets.setVec3("light.direction", camera.Front);
-planets.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-planets.setVec3("viewPos", camera.Position);
-
-// light properties
-planets.setVec3("light.ambient", 0.1f, 0.1f, 0.1f);
-// we configure the diffuse intensity slightly higher; the right lighting conditions differ with each lighting method and environment.
-// each environment and lighting type requires some tweaking to get the best out of your environment.
-planets.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
-planets.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-planets.setFloat("light.constant", 1.0f);
-planets.setFloat("light.linear", 0.09f);
-planets.setFloat("light.quadratic", 0.032f);
-// material properties
 planets.setFloat("material.shininess", 32.0f);
+//Global Light Prop
+        planets.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
+        planets.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        planets.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
+        planets.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+        // point light 1
+        planets.setVec3("pointLights[0].position", pointLightPositions[0]);
+        planets.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+        planets.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+        planets.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+        planets.setFloat("pointLights[0].constant", 1.0f);
+        planets.setFloat("pointLights[0].linear", 0.09f);
+        planets.setFloat("pointLights[0].quadratic", 0.032f);
+        // point light 2
+        planets.setVec3("pointLights[1].position", pointLightPositions[1]);
+        planets.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+        planets.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+        planets.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+        planets.setFloat("pointLights[1].constant", 1.0f);
+        planets.setFloat("pointLights[1].linear", 0.09f);
+        planets.setFloat("pointLights[1].quadratic", 0.032f);
+        // point light 3
+        planets.setVec3("pointLights[2].position", pointLightPositions[2]);
+        planets.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+        planets.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+        planets.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+        planets.setFloat("pointLights[2].constant", 1.0f);
+        planets.setFloat("pointLights[2].linear", 0.09f);
+        planets.setFloat("pointLights[2].quadratic", 0.032f);
+        // point light 4
+        planets.setVec3("pointLights[3].position", pointLightPositions[3]);
+        planets.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+        planets.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+        planets.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+        planets.setFloat("pointLights[3].constant", 1.0f);
+        planets.setFloat("pointLights[3].linear", 0.09f);
+        planets.setFloat("pointLights[3].quadratic", 0.032f);
+        // spotLight
+        planets.setVec3("spotLight.position", camera.Position);
+        planets.setVec3("spotLight.direction", camera.Front);
+        planets.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
+        planets.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+        planets.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
+        planets.setFloat("spotLight.constant", 1.0f);
+        planets.setFloat("spotLight.linear", 0.09f);
+        planets.setFloat("spotLight.quadratic", 0.032f);
+        planets.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        planets.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));  
 
+planets.setVec3("viewPos", camera.Position);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 
-        // world transformation
-        model = glm::mat4(1.0f);
-        planets.setMat4("model", model);
+// world transformation
+model = glm::mat4(1.0f);
+planets.setMat4("model", model);
+glBindVertexArray(PlanetsVAO);
+for (unsigned int i = 0; i < 4; i++)
+{
+if(i%2==0)
+{
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, MercuryDiffuseMap);
 
-        // bind diffuse map
-   
-        glBindVertexArray(PlanetsVAO);
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            if(i%2==0){
-                     glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, MercuryDiffuseMap);
-        // bind specular map
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, MercurySpecularMap);
-            }else{
-                     glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, VenusDiffuseMap);
-        // bind specular map
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, VenusSpecularMap);
-            }
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(30.0f), glm::vec3(0.0, 1.0, 0.0));
-            model = glm::translate(model, glm::vec3(sunSize + 3.0f, 0.0f, 0.0f));
-            model = glm::rotate(model, (float)glfwGetTime() * 0.5f, glm::vec3(0.0, 1.0, 0.0));
-            model = glm::scale(model, glm::vec3(0.6f));
-            glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_2D, MercurySpecularMap);
+}
+else
+{
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, VenusDiffuseMap);
 
-
-
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_2D, VenusSpecularMap);
+}
+glm::mat4 model = glm::mat4(1.0f);
+model = glm::translate(model, cubePositions[i]);
+model = glm::rotate(model, (float)glfwGetTime() * glm::radians(30.0f), glm::vec3(0.0, 1.0, 0.0));
+model = glm::translate(model, glm::vec3(sunSize + 3.0f, 0.0f, 0.0f));
+model = glm::rotate(model, (float)glfwGetTime() * 0.5f, glm::vec3(0.0, 1.0, 0.0));
+model = glm::scale(model, glm::vec3(0.6f));
+glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
+glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+glfwSwapBuffers(window);
+glfwPollEvents();
+}
 glDeleteVertexArrays(1, &SunVAO);
 glDeleteBuffers(1, &VBO);
-
 glfwTerminate();
 return 0;
 }
