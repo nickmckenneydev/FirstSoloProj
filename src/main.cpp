@@ -117,6 +117,13 @@ glm::vec3 pointLightPositions[] = {
         glm::vec3(-4.0f,  2.0f, -12.0f),
         glm::vec3( 0.0f,  0.0f, -3.0f)
 };
+
+glm::vec3 pointLightColors[] = {
+    glm::vec3(1.0f, 0.6f, 0.0f),
+    glm::vec3(1.0f, 0.0f, 0.0f),
+    glm::vec3(1.0f, 1.0, 0.0),
+    glm::vec3(0.2f, 0.2f, 1.0f)
+};
 unsigned int VBO,SunVAO,PlanetsVAO;
 glGenVertexArrays(1, &SunVAO);
 glGenBuffers(1,&VBO);
@@ -215,54 +222,55 @@ glUseProgram(planets.ID);
 planets.setInt("material.diffuse",0);
 planets.setInt("material.specular", 1);
 planets.setFloat("material.shininess", 32.0f);
-//Global Light Prop
-        planets.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-        planets.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-        planets.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-        planets.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-        // point light 1
-        planets.setVec3("pointLights[0].position", pointLightPositions[0]);
-        planets.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-        planets.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-        planets.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-        planets.setFloat("pointLights[0].constant", 1.0f);
-        planets.setFloat("pointLights[0].linear", 0.09f);
-        planets.setFloat("pointLights[0].quadratic", 0.032f);
-        // point light 2
-        planets.setVec3("pointLights[1].position", pointLightPositions[1]);
-        planets.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-        planets.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-        planets.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-        planets.setFloat("pointLights[1].constant", 1.0f);
-        planets.setFloat("pointLights[1].linear", 0.09f);
-        planets.setFloat("pointLights[1].quadratic", 0.032f);
-        // point light 3
-        planets.setVec3("pointLights[2].position", pointLightPositions[2]);
-        planets.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-        planets.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-        planets.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-        planets.setFloat("pointLights[2].constant", 1.0f);
-        planets.setFloat("pointLights[2].linear", 0.09f);
-        planets.setFloat("pointLights[2].quadratic", 0.032f);
-        // point light 4
-        planets.setVec3("pointLights[3].position", pointLightPositions[3]);
-        planets.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-        planets.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-        planets.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-        planets.setFloat("pointLights[3].constant", 1.0f);
-        planets.setFloat("pointLights[3].linear", 0.09f);
-        planets.setFloat("pointLights[3].quadratic", 0.032f);
-        // spotLight
-        planets.setVec3("spotLight.position", camera.Position);
-        planets.setVec3("spotLight.direction", camera.Front);
-        planets.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-        planets.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-        planets.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-        planets.setFloat("spotLight.constant", 1.0f);
-        planets.setFloat("spotLight.linear", 0.09f);
-        planets.setFloat("spotLight.quadratic", 0.032f);
-        planets.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-        planets.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));  
+
+// directional light
+glUniform3f(glGetUniformLocation(planets.ID, "dirLight.direction"), -0.2f, -1.0f, -0.3f);		
+glUniform3f(glGetUniformLocation(planets.ID, "dirLight.ambient"), 0.3f, 0.24f, 0.14f);	
+glUniform3f(glGetUniformLocation(planets.ID, "dirLight.diffuse"), 0.7f, 0.42f, 0.26f); 
+glUniform3f(glGetUniformLocation(planets.ID, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+// Point light 1
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);		
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].ambient"), pointLightColors[0].x * 0.1,  pointLightColors[0].y * 0.1,  pointLightColors[0].z * 0.1);		
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].diffuse"), pointLightColors[0].x,  pointLightColors[0].y,  pointLightColors[0].z); 
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].specular"), pointLightColors[0].x,  pointLightColors[0].y,  pointLightColors[0].z);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].constant"), 1.0f);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].linear"), 0.09);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);		
+// Point light 2
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);		
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[1].ambient"), pointLightColors[1].x * 0.1,  pointLightColors[1].y * 0.1,  pointLightColors[1].z * 0.1);		
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[1].diffuse"), pointLightColors[1].x,  pointLightColors[1].y,  pointLightColors[1].z); 
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[1].specular"), pointLightColors[1].x,  pointLightColors[1].y,  pointLightColors[1].z);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[1].constant"), 1.0f);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[1].linear"), 0.09);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[1].quadratic"), 0.032);		
+// Point light 3
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[2].position"), pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);		
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[2].ambient"), pointLightColors[2].x * 0.1,  pointLightColors[2].y * 0.1,  pointLightColors[2].z * 0.1);		
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[2].diffuse"), pointLightColors[2].x,  pointLightColors[2].y,  pointLightColors[2].z); 
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[2].specular") ,pointLightColors[2].x,  pointLightColors[2].y,  pointLightColors[2].z);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[2].constant"), 1.0f);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[2].linear"), 0.09);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[2].quadratic"), 0.032);		
+// Point light 4
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[3].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);		
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[3].ambient"), pointLightColors[3].x * 0.1,  pointLightColors[3].y * 0.1,  pointLightColors[3].z * 0.1);		
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[3].diffuse"), pointLightColors[3].x,  pointLightColors[3].y,  pointLightColors[3].z); 
+glUniform3f(glGetUniformLocation(planets.ID, "pointLights[3].specular"), pointLightColors[3].x,  pointLightColors[3].y,  pointLightColors[3].z);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[3].constant"), 1.0f);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[3].linear"), 0.09);
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[3].quadratic"), 0.032);		
+// SpotLight
+glUniform3f(glGetUniformLocation(planets.ID, "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);	
+glUniform3f(glGetUniformLocation(planets.ID, "spotLight.direction"), camera.Front.x, camera.Front.y, camera.Front.z);
+glUniform3f(glGetUniformLocation(planets.ID, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);	
+glUniform3f(glGetUniformLocation(planets.ID, "spotLight.diffuse"), 0.8f, 0.8f, 0.0f); 
+glUniform3f(glGetUniformLocation(planets.ID, "spotLight.specular"), 0.8f, 0.8f, 0.0f);
+glUniform1f(glGetUniformLocation(planets.ID, "spotLight.constant"), 1.0f);
+glUniform1f(glGetUniformLocation(planets.ID, "spotLight.linear"), 0.09);
+glUniform1f(glGetUniformLocation(planets.ID, "spotLight.quadratic"), 0.032);			
+glUniform1f(glGetUniformLocation(planets.ID, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
+glUniform1f(glGetUniformLocation(planets.ID, "spotLight.outerCutOff"), glm::cos(glm::radians(13.0f)));
 
 planets.setVec3("viewPos", camera.Position);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
@@ -298,6 +306,18 @@ model = glm::rotate(model, (float)glfwGetTime() * 0.5f, glm::vec3(0.0, 1.0, 0.0)
 model = glm::scale(model, glm::vec3(0.6f));
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
 glDrawArrays(GL_TRIANGLES, 0, 36);
+
+for(int i=0;i<4;i++)
+{
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, sunTextureImage);
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, pointLightPositions[i]);
+    glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+}
+
 }
 glfwSwapBuffers(window);
 glfwPollEvents();
