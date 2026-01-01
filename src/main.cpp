@@ -167,168 +167,99 @@ glEnable(GL_DEPTH_TEST);
 glm::vec3 lightPos = glm::vec3(0.0f,0.0f,0.0f);
 
 glm::vec3 specularMaterial = glm::vec3(0.0f);
-
-
-// while (!glfwWindowShouldClose(window))
-// {
-// float currentFrame = static_cast<float>(glfwGetTime());
-// deltaTime = currentFrame - lastFrame;
-// lastFrame = currentFrame;
-
-// processInput(window);
-
-// glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-// //activate shader when setting uniforms/drawing objects
-// glUseProgram(sun.ID); 
-// glActiveTexture(GL_TEXTURE0); // Tell OpenGL we are using slot 0
-// glBindTexture(GL_TEXTURE_2D, sunTextureImage);
-// glUniform1i(glGetUniformLocation(sun.ID, "sunTexture"), 0);
-// glUniform3f(glGetUniformLocation(sun.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
-// // view/projection transformations
-// glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-// glm::mat4 view = camera.GetViewMatrix();
-// glUniformMatrix4fv(glGetUniformLocation(sun.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-// glUniformMatrix4fv(glGetUniformLocation(sun.ID, "view"), 1, GL_FALSE, &view[0][0]);
-// // World transformation
-// glm::mat4 model = glm::mat4(1.0f);
-// float sunSize = 1.6f;
-// model = glm::scale(model, glm::vec3(sunSize)); // a smaller cube
-// glUniformMatrix4fv(glGetUniformLocation(sun.ID, "model"), 1, GL_FALSE, &model[0][0]);
-// //Render the Sun
-// glBindVertexArray(SunVAO);
-// glBindTexture(GL_TEXTURE_2D, sunTextureImage);
-// glDrawArrays(GL_TRIANGLES, 0, 36);
-
-// //Planets
-// glUseProgram(planets.ID);
-// //Global Material Prop
-// planets.setInt("material.diffuse",0);
-// planets.setInt("material.specular", 1);
-// planets.setVec3("viewPos", camera.Position);
-// //Light Prop Global
-// planets.setVec3("light.position", 0.0f, 0.0f, 0.0f);
-// planets.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-// planets.setVec3("light.ambient", 0.4f, 0.4f, 0.4f);
-// planets.setVec3("light.direction",camera.Front); 
-// planets.setFloat("light.cutOff",   glm::cos(glm::radians(12.5f)));
-
-// planets.setFloat("light.constant",  1.0f);
-// planets.setFloat("light.linear",    0.09f);
-// planets.setFloat("light.quadratic", 0.032f);
-// //Material Prop
-// glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
-// glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-
-// // Render the Mercury Planet
-// // Lighting
-// planets.setVec3("light.diffuse", 1.0f, 1.0f, 0.9f); 
-// // Materials
-// planets.setFloat("material.shininess", 16.0f);
-// // Bind diffuse map
-// glActiveTexture(GL_TEXTURE0);
-// glBindTexture(GL_TEXTURE_2D, MercuryDiffuseMap);
-// // Bind specular map
-// glActiveTexture(GL_TEXTURE1);
-// glBindTexture(GL_TEXTURE_2D, MercurySpecularMap);
-// model = glm::mat4(1.0f);
-// model = glm::rotate(model, (float)glfwGetTime() * glm::radians(30.0f), glm::vec3(0.0, 1.0, 0.0));
-// model = glm::translate(model, glm::vec3(sunSize + 3.0f, 0.0f, 0.0f));
-// model = glm::rotate(model, (float)glfwGetTime() * 0.5f, glm::vec3(0.0, 1.0, 0.0));
-// model = glm::scale(model, glm::vec3(0.6f)); // Smaller Cube
-// glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-// glBindVertexArray(PlanetsVAO);
-// glDrawArrays(GL_TRIANGLES, 0, 36);
-// // Render the Venus Planet
-// // Lighting
-// planets.setVec3("light.diffuse", 0.7f, 0.6f, 0.4f); 
-// // Materials 
-// planets.setFloat("material.shininess", 2.0f);
-// // Bind diffuse map
-// glActiveTexture(GL_TEXTURE0);
-// glBindTexture(GL_TEXTURE_2D, VenusDiffuseMap);
-// // Bind specular map
-// glActiveTexture(GL_TEXTURE1);
-// glBindTexture(GL_TEXTURE_2D, VenusSpecularMap);
-// model = glm::mat4(1.0f);
-// model = glm::rotate(model, (float)glfwGetTime()*glm::radians(10.0f), glm::vec3(0.0, 1.0, 0.0));
-// model = glm::translate(model, glm::vec3(sunSize+7.0f, 0.0f, 0.0f));
-// model = glm::rotate(model, (float)glfwGetTime() * 1.5f, glm::vec3(0.0, 1.0, 0.0));
-// model = glm::scale(model, glm::vec3(1.9f)); // Smaller Cube
-// glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-// glBindVertexArray(PlanetsVAO);
-// glDrawArrays(GL_TRIANGLES, 0, 36);
-
-// glfwSwapBuffers(window);
-// glfwPollEvents();
-// }
-
    while (!glfwWindowShouldClose(window))
     {
-        // per-frame time logic
-        // --------------------
-        float currentFrame = static_cast<float>(glfwGetTime());
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+// per-frame time logic
+// --------------------
+float currentFrame = static_cast<float>(glfwGetTime());
+deltaTime = currentFrame - lastFrame;
+lastFrame = currentFrame;
 
-        // input
-        // -----
-        processInput(window);
+// input
+// -----
+processInput(window);
 
-        // render
-        // ------
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+// render
+// ------
+glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+glUseProgram(sun.ID); 
+glActiveTexture(GL_TEXTURE0); // Tell OpenGL we are using slot 0
+glBindTexture(GL_TEXTURE_2D, sunTextureImage);
+glUniform1i(glGetUniformLocation(sun.ID, "sunTexture"), 0);
+glUniform3f(glGetUniformLocation(sun.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
+// view/projection transformations
+glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+glm::mat4 view = camera.GetViewMatrix();
+glUniformMatrix4fv(glGetUniformLocation(sun.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
+glUniformMatrix4fv(glGetUniformLocation(sun.ID, "view"), 1, GL_FALSE, &view[0][0]);
+// World transformation
+glm::mat4 model = glm::mat4(1.0f);
+float sunSize = 1.6f;
+model = glm::scale(model, glm::vec3(sunSize)); // a smaller cube
+glUniformMatrix4fv(glGetUniformLocation(sun.ID, "model"), 1, GL_FALSE, &model[0][0]);
+//Render the Sun
+glBindVertexArray(SunVAO);
+glBindTexture(GL_TEXTURE_2D, sunTextureImage);
+glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
         // be sure to activate shader when setting uniforms/drawing objects
-        planets.use();
-        planets.setVec3("light.position", camera.Position);
-        planets.setVec3("light.direction", camera.Front);
-        planets.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-        planets.setVec3("viewPos", camera.Position);
+     
+glUseProgram(planets.ID);
+//Global Material Prop
+planets.setInt("material.diffuse",0);
+planets.setInt("material.specular", 1);
 
-        // light properties
-        planets.setVec3("light.ambient", 0.1f, 0.1f, 0.1f);
-        // we configure the diffuse intensity slightly higher; the right lighting conditions differ with each lighting method and environment.
-        // each environment and lighting type requires some tweaking to get the best out of your environment.
-        planets.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
-        planets.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
-        planets.setFloat("light.constant", 1.0f);
-        planets.setFloat("light.linear", 0.09f);
-        planets.setFloat("light.quadratic", 0.032f);
+planets.setVec3("light.position", camera.Position);
+planets.setVec3("light.direction", camera.Front);
+planets.setFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+planets.setVec3("viewPos", camera.Position);
 
-        // material properties
-        planets.setFloat("material.shininess", 32.0f);
+// light properties
+planets.setVec3("light.ambient", 0.1f, 0.1f, 0.1f);
+// we configure the diffuse intensity slightly higher; the right lighting conditions differ with each lighting method and environment.
+// each environment and lighting type requires some tweaking to get the best out of your environment.
+planets.setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
+planets.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
+planets.setFloat("light.constant", 1.0f);
+planets.setFloat("light.linear", 0.09f);
+planets.setFloat("light.quadratic", 0.032f);
+// material properties
+planets.setFloat("material.shininess", 32.0f);
 
-        // view/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-        planets.setMat4("projection", projection);
-        planets.setMat4("view", view);
+glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
+glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 
         // world transformation
-        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::mat4(1.0f);
         planets.setMat4("model", model);
 
         // bind diffuse map
-        glActiveTexture(GL_TEXTURE0);
+   
+        glBindVertexArray(PlanetsVAO);
+        for (unsigned int i = 0; i < 10; i++)
+        {
+            if(i%2==0){
+                     glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, MercuryDiffuseMap);
+        // bind specular map
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, MercurySpecularMap);
+            }else{
+                     glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, VenusDiffuseMap);
         // bind specular map
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, VenusSpecularMap);
-
-        // render containers
-        glBindVertexArray(PlanetsVAO);
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            // calculate the model matrix for each object and pass it to shader before drawing
+            }
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            planets.setMat4("model", model);
-
+            model = glm::rotate(model, (float)glfwGetTime() * glm::radians(30.0f), glm::vec3(0.0, 1.0, 0.0));
+            model = glm::translate(model, glm::vec3(sunSize + 3.0f, 0.0f, 0.0f));
+            model = glm::rotate(model, (float)glfwGetTime() * 0.5f, glm::vec3(0.0, 1.0, 0.0));
+            model = glm::scale(model, glm::vec3(0.6f));
+            glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
         glfwSwapBuffers(window);
