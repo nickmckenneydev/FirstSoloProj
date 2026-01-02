@@ -28,6 +28,10 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 GLint success;
 char infoLog[512];
+
+
+
+
 int main()
 {
 glfwInit();
@@ -219,8 +223,8 @@ glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].constant"), 1.0f);
 glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].linear"), 0.09);
 glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);		
 // SpotLight
-glUniform3f(glGetUniformLocation(planets.ID, "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);	
-glUniform3f(glGetUniformLocation(planets.ID, "spotLight.direction"), camera.Front.x, camera.Front.y, camera.Front.z);
+glUniform3f(glGetUniformLocation(planets.ID, "spotLight.position"), 0.0f, 0.0f, 0.0f);	
+glUniform3f(glGetUniformLocation(planets.ID, "spotLight.direction"), 0.0f, 0.0f, -1.0f);	
 glUniform3f(glGetUniformLocation(planets.ID, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);	
 glUniform3f(glGetUniformLocation(planets.ID, "spotLight.diffuse"), 0.8f, 0.8f, 0.0f); 
 glUniform3f(glGetUniformLocation(planets.ID, "spotLight.specular"), 0.8f, 0.8f, 0.0f);
