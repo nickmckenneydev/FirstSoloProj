@@ -98,31 +98,14 @@ float vertices[] = {
     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
-glm::vec3 cubePositions[] = {
-        glm::vec3( 0.0f,  0.0f,  0.0f),
-        glm::vec3( 2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3( 2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3( 1.3f, -2.0f, -2.5f),
-        glm::vec3( 1.5f,  2.0f, -2.5f),
-        glm::vec3( 1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-};
+
 
 glm::vec3 pointLightPositions[] = {
-        glm::vec3( 0.7f,  0.2f,  2.0f),
-        glm::vec3( 2.3f, -3.3f, -4.0f),
-        glm::vec3(-4.0f,  2.0f, -12.0f),
-        glm::vec3( 0.0f,  0.0f, -3.0f)
+        glm::vec3( 8.0f,  0.0f,  0.0f),
 };
 
 glm::vec3 pointLightColors[] = {
-    glm::vec3(1.0f, 0.6f, 0.0f),
-    glm::vec3(1.0f, 0.0f, 0.0f),
-    glm::vec3(1.0f, 1.0, 0.0),
-    glm::vec3(0.2f, 0.2f, 1.0f)
+    glm::vec3(0.75f, 0.0f, 1.0f)
 };
 unsigned int VBO,SunVAO,PlanetsVAO;
 glGenVertexArrays(1, &SunVAO);
@@ -176,12 +159,13 @@ unsigned int MercurySpecularMap = loadTexture("/home/a/Desktop/FirstSoloProj/src
 //Venus
 unsigned int VenusDiffuseMap=loadTexture("/home/a/Desktop/FirstSoloProj/src/venus.jpg");
 unsigned int VenusSpecularMap=loadTexture("/home/a/Desktop/FirstSoloProj/src/venusSpecMap.jpg");
+//Purple!
+unsigned int PurpleDiffuseMap=loadTexture("/home/a/Desktop/FirstSoloProj/src/purple.jpeg");
 glEnable(GL_DEPTH_TEST);
 
 glm::vec3 lightPos = glm::vec3(0.0f,0.0f,0.0f);
-
 glm::vec3 specularMaterial = glm::vec3(0.0f);
-   while (!glfwWindowShouldClose(window))
+while (!glfwWindowShouldClose(window))
     {
 // per-frame time logic
 // --------------------
@@ -189,16 +173,12 @@ float currentFrame = static_cast<float>(glfwGetTime());
 deltaTime = currentFrame - lastFrame;
 lastFrame = currentFrame;
 
-// input
-// -----
 processInput(window);
 
-// render
-// ------
 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 glUseProgram(sun.ID); 
-glActiveTexture(GL_TEXTURE0); // Tell OpenGL we are using slot 0
+glActiveTexture(GL_TEXTURE0); 
 glBindTexture(GL_TEXTURE_2D, sunTextureImage);
 glUniform1i(glGetUniformLocation(sun.ID, "sunTexture"), 0);
 glUniform3f(glGetUniformLocation(sun.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
@@ -207,15 +187,17 @@ glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WI
 glm::mat4 view = camera.GetViewMatrix();
 glUniformMatrix4fv(glGetUniformLocation(sun.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 glUniformMatrix4fv(glGetUniformLocation(sun.ID, "view"), 1, GL_FALSE, &view[0][0]);
-// World transformation
+
+//Render the Sun
 glm::mat4 model = glm::mat4(1.0f);
 float sunSize = 1.6f;
 model = glm::scale(model, glm::vec3(sunSize)); // a smaller cube
 glUniformMatrix4fv(glGetUniformLocation(sun.ID, "model"), 1, GL_FALSE, &model[0][0]);
-//Render the Sun
 glBindVertexArray(SunVAO);
 glBindTexture(GL_TEXTURE_2D, sunTextureImage);
 glDrawArrays(GL_TRIANGLES, 0, 36); 
+
+
 // Planets    
 glUseProgram(planets.ID);
 //Global Material Prop
@@ -236,30 +218,6 @@ glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].specular"), pointLi
 glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].constant"), 1.0f);
 glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].linear"), 0.09);
 glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);		
-// Point light 2
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[1].position"), pointLightPositions[1].x, pointLightPositions[1].y, pointLightPositions[1].z);		
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[1].ambient"), pointLightColors[1].x * 0.1,  pointLightColors[1].y * 0.1,  pointLightColors[1].z * 0.1);		
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[1].diffuse"), pointLightColors[1].x,  pointLightColors[1].y,  pointLightColors[1].z); 
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[1].specular"), pointLightColors[1].x,  pointLightColors[1].y,  pointLightColors[1].z);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[1].constant"), 1.0f);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[1].linear"), 0.09);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[1].quadratic"), 0.032);		
-// Point light 3
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[2].position"), pointLightPositions[2].x, pointLightPositions[2].y, pointLightPositions[2].z);		
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[2].ambient"), pointLightColors[2].x * 0.1,  pointLightColors[2].y * 0.1,  pointLightColors[2].z * 0.1);		
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[2].diffuse"), pointLightColors[2].x,  pointLightColors[2].y,  pointLightColors[2].z); 
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[2].specular") ,pointLightColors[2].x,  pointLightColors[2].y,  pointLightColors[2].z);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[2].constant"), 1.0f);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[2].linear"), 0.09);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[2].quadratic"), 0.032);		
-// Point light 4
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[3].position"), pointLightPositions[3].x, pointLightPositions[3].y, pointLightPositions[3].z);		
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[3].ambient"), pointLightColors[3].x * 0.1,  pointLightColors[3].y * 0.1,  pointLightColors[3].z * 0.1);		
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[3].diffuse"), pointLightColors[3].x,  pointLightColors[3].y,  pointLightColors[3].z); 
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[3].specular"), pointLightColors[3].x,  pointLightColors[3].y,  pointLightColors[3].z);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[3].constant"), 1.0f);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[3].linear"), 0.09);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[3].quadratic"), 0.032);		
 // SpotLight
 glUniform3f(glGetUniformLocation(planets.ID, "spotLight.position"), camera.Position.x, camera.Position.y, camera.Position.z);	
 glUniform3f(glGetUniformLocation(planets.ID, "spotLight.direction"), camera.Front.x, camera.Front.y, camera.Front.z);
@@ -280,45 +238,47 @@ glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, 
 model = glm::mat4(1.0f);
 planets.setMat4("model", model);
 glBindVertexArray(PlanetsVAO);
-for (unsigned int i = 0; i < 4; i++)
-{
-if(i%2==0)
-{
+
 glActiveTexture(GL_TEXTURE0);
 glBindTexture(GL_TEXTURE_2D, MercuryDiffuseMap);
 
 glActiveTexture(GL_TEXTURE1);
 glBindTexture(GL_TEXTURE_2D, MercurySpecularMap);
-}
-else
-{
-glActiveTexture(GL_TEXTURE0);
-glBindTexture(GL_TEXTURE_2D, VenusDiffuseMap);
 
-glActiveTexture(GL_TEXTURE1);
-glBindTexture(GL_TEXTURE_2D, VenusSpecularMap);
-}
-glm::mat4 model = glm::mat4(1.0f);
-model = glm::translate(model, cubePositions[i]);
+model = glm::mat4(1.0f);
+model = glm::translate(model, glm::vec3( 0.0f,  0.0f,  0.0f));
+
 model = glm::rotate(model, (float)glfwGetTime() * glm::radians(30.0f), glm::vec3(0.0, 1.0, 0.0));
-model = glm::translate(model, glm::vec3(sunSize + 3.0f, 0.0f, 0.0f));
+model = glm::translate(model, glm::vec3(sunSize + 2.0f, 0.0f, 0.0f));
 model = glm::rotate(model, (float)glfwGetTime() * 0.5f, glm::vec3(0.0, 1.0, 0.0));
-model = glm::scale(model, glm::vec3(0.6f));
+model = glm::scale(model, glm::vec3(0.4f));
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
 glDrawArrays(GL_TRIANGLES, 0, 36);
 
-for(int i=0;i<4;i++)
-{
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, sunTextureImage);
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, pointLightPositions[i]);
-    glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, VenusDiffuseMap);
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_2D, VenusSpecularMap);
 
-}
+model = glm::mat4(1.0f);
+model = glm::translate(model, glm::vec3( 0.0f,  0.0f,  0.0f));
+model = glm::rotate(model, (float)glfwGetTime() * glm::radians(30.0f), glm::vec3(0.0, 1.0, 0.0));
+model = glm::translate(model, glm::vec3(sunSize + 3.0f, 0.0f, 0.0f));
+model = glm::rotate(model, (float)glfwGetTime() * 0.5f, glm::vec3(0.0, 1.0, 0.0));
+model = glm::scale(model, glm::vec3(0.3f));
+glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
+glDrawArrays(GL_TRIANGLES, 0, 36);
 
-}
+
+
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, PurpleDiffuseMap);
+model = glm::mat4(1.0f);
+model = glm::translate(model, pointLightPositions[0]);
+glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
+glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
 glfwSwapBuffers(window);
 glfwPollEvents();
 }
