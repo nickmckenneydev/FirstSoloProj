@@ -10,4 +10,4 @@ add_executable(firstsoloproj src/main.cpp src/glad.h src/glad.c src/stb_image.h)
 target_include_directories(firstsoloproj PUBLIC src)
 # ------------------------------------------------------------------
 
-target_link_libraries(firstsoloproj glfw OpenGL::GL)
+target_link_libraries(firstsoloproj glfw OpenGL::GL assimp)
