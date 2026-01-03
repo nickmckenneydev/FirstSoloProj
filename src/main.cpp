@@ -32,10 +32,6 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 GLint success;
 char infoLog[512];
-
-
-
-
 int main()
 {
 glfwInit();
@@ -64,6 +60,7 @@ Shader planets("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs", "/home/a/
 Shader sun("/home/a/Desktop/FirstSoloProj/src/shaders/sun.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/sun.fs");
 Shader modelShader("/home/a/Desktop/FirstSoloProj/src/shaders/model_loading.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/model_loading.fs");
 Model modelObject("/home/a/Desktop/FirstSoloProj/src/objects/backpack/backpack.obj");
+
 float vertices[] = {
     // positions          // normals           // texture coords
     -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
@@ -211,7 +208,7 @@ float sunSize = 1.6f;
 glUseProgram(modelShader.ID);
 model = glm::mat4(1.0f);
 model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); 
-model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));	
+model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));	
 modelShader.setMat4("model", model);
 modelObject.Draw(modelShader);
 
