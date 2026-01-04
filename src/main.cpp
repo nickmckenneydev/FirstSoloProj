@@ -13,8 +13,11 @@
 #include <iostream>
 #include <filesystem>
 
+
 #define STB_IMAGE_IMPLEMENTATION
+
 #include "stb_image.h"
+// #include "TinyGLTF/tiny_gltf.h"
 namespace fs = std::filesystem;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -24,7 +27,7 @@ unsigned int loadTexture(const char *path);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-Camera camera(glm::vec3(0.0f, 0.0f, 2.0f));
+Camera camera(glm::vec3(0.0f, 1.0f, 10.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -61,6 +64,10 @@ Shader sun("/home/a/Desktop/FirstSoloProj/src/shaders/sun.vs", "/home/a/Desktop/
 Shader modelShader("/home/a/Desktop/FirstSoloProj/src/shaders/model_loading.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/model_loading.fs");
 Model modelObject("/home/a/Desktop/FirstSoloProj/src/objects/backpack/backpack.obj");
 
+Model modelObjectMercury("/home/a/Desktop/FirstSoloProj/src/objects/mercury/Mercury 1K.obj");
+Model modelObjectSun("/home/a/Desktop/FirstSoloProj/src/objects/sun2/13913_Sun_v2_l3.obj");
+std::string modelPath = "/home/a/Desktop/FirstSoloProj/src/objects/sun/scene.gltf";
+Model sunGLTF("/home/a/Desktop/FirstSoloProj/src/objects/sun/scene.gltf");
 float vertices[] = {
     // positions          // normals           // texture coords
     -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
@@ -106,7 +113,6 @@ float vertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
 
-
 glm::vec3 pointLightPositions[] = {
         glm::vec3( 8.0f,  0.0f,  0.0f),
 };
@@ -115,57 +121,10 @@ glm::vec3 pointLightColors[] = {
     glm::vec3(0.75f, 0.0f, 1.0f)
 };
 unsigned int VBO,SunVAO,PlanetsVAO;
-glGenVertexArrays(1, &SunVAO);
-glGenBuffers(1,&VBO);
-
-glBindVertexArray(SunVAO);
-glBindBuffer(GL_ARRAY_BUFFER, VBO);
-glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-// position attribute
-glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-glEnableVertexAttribArray(0);
-// normal attribute
-glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-glEnableVertexAttribArray(1);
-// texture attribute
-glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-glEnableVertexAttribArray(2);
-//SUN Texture
-unsigned int sunTextureImage;
-glGenTextures(1, &sunTextureImage);
-glBindTexture(GL_TEXTURE_2D, sunTextureImage);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-int width, height, nrChannels;
-unsigned char *data = stbi_load("/home/a/Desktop/FirstSoloProj/src/sun.png", &width, &height, &nrChannels, 0);
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-glGenerateMipmap(GL_TEXTURE_2D);
-stbi_image_free(data);
-glGenVertexArrays(1, &PlanetsVAO);
-glGenBuffers(1,&VBO);
-glBindVertexArray(PlanetsVAO);
-glBindBuffer(GL_ARRAY_BUFFER, VBO);
-glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-// position attribute
-glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-glEnableVertexAttribArray(0);
-// normal attribute
-glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-glEnableVertexAttribArray(1);
-// texture attribute
-glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-glEnableVertexAttribArray(2);
 
 // Planets Texture
 // Mercury Texture
-unsigned int MercuryDiffuseMap = loadTexture("/home/a/Desktop/FirstSoloProj/src/mercury.jpeg");
-unsigned int MercurySpecularMap = loadTexture("/home/a/Desktop/FirstSoloProj/src/mercurySpecMap.jpg");
 
-//Venus
-unsigned int VenusDiffuseMap=loadTexture("/home/a/Desktop/FirstSoloProj/src/venus.jpg");
-unsigned int VenusSpecularMap=loadTexture("/home/a/Desktop/FirstSoloProj/src/venusSpecMap.jpg");
 //Purple!
 unsigned int PurpleDiffuseMap=loadTexture("/home/a/Desktop/FirstSoloProj/src/purple.jpeg");
 glEnable(GL_DEPTH_TEST);
@@ -173,45 +132,38 @@ glEnable(GL_DEPTH_TEST);
 glm::vec3 lightPos = glm::vec3(0.0f,0.0f,0.0f);
 glm::vec3 specularMaterial = glm::vec3(0.0f);
 while (!glfwWindowShouldClose(window))
-    {
-// per-frame time logic
-// --------------------
+{
 float currentFrame = static_cast<float>(glfwGetTime());
 deltaTime = currentFrame - lastFrame;
 lastFrame = currentFrame;
 
 processInput(window);
-
 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-// glUseProgram(sun.ID); 
-// glActiveTexture(GL_TEXTURE0); 
-// glBindTexture(GL_TEXTURE_2D, sunTextureImage);
-// glUniform1i(glGetUniformLocation(sun.ID, "sunTexture"), 0);
-// glUniform3f(glGetUniformLocation(sun.ID, "objectColor"), 1.0f, 1.0f, 1.0f);
-// // view/projection transformations
+// view/projection transformations
 glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 glm::mat4 view = camera.GetViewMatrix();
 glUniformMatrix4fv(glGetUniformLocation(sun.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 glUniformMatrix4fv(glGetUniformLocation(sun.ID, "view"), 1, GL_FALSE, &view[0][0]);
 
-//Render the Sun
 glm::mat4 model = glm::mat4(1.0f);
-float sunSize = 1.6f;
-// model = glm::scale(model, glm::vec3(sunSize)); // a smaller cube
-// glUniformMatrix4fv(glGetUniformLocation(sun.ID, "model"), 1, GL_FALSE, &model[0][0]);
-// glBindVertexArray(SunVAO);
-// glBindTexture(GL_TEXTURE_2D, sunTextureImage);
-// glDrawArrays(GL_TRIANGLES, 0, 36); 
 
-// Render Model
+// Render Sun Model
 glUseProgram(modelShader.ID);
 model = glm::mat4(1.0f);
 model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); 
-model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));	
-modelShader.setMat4("model", model);
-modelObject.Draw(modelShader);
+model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));	
+glUniformMatrix4fv(glGetUniformLocation(modelShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+sunGLTF.Draw(modelShader);
 
+// // Render Mercury Model
+glUseProgram(modelShader.ID);
+model = glm::mat4(1.0f);
+model = glm::translate(model, glm::vec3(6.0f, 0.0f, 0.0f)); 
+model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));	
+glUniformMatrix4fv(glGetUniformLocation(modelShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+modelObjectMercury.Draw(modelShader);
+	
 // // Planets    
 // glUseProgram(planets.ID);
 // //Global Material Prop
@@ -283,8 +235,6 @@ modelObject.Draw(modelShader);
 // glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
 // glDrawArrays(GL_TRIANGLES, 0, 36);
 
-
-
 // glActiveTexture(GL_TEXTURE0);
 // glBindTexture(GL_TEXTURE_2D, PurpleDiffuseMap);
 // model = glm::mat4(1.0f);
@@ -305,7 +255,6 @@ void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
