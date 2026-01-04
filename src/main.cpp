@@ -63,8 +63,6 @@ Shader planets("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs", "/home/a/
 
 
 Shader modelShader("/home/a/Desktop/FirstSoloProj/src/shaders/model_loading.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/model_loading.fs");
-Model modelObject("/home/a/Desktop/FirstSoloProj/src/objects/backpack/backpack.obj");
-
 Model modelObjectMercury("/home/a/Desktop/FirstSoloProj/src/objects/mercury/Mercury 1K.obj");
 Model sunGLTF("/home/a/Desktop/FirstSoloProj/src/objects/sun/scene.gltf");
 
@@ -174,6 +172,20 @@ model = glm::rotate(model, (float)glfwGetTime() * glm::radians(30.0f), glm::vec3
 model = glm::translate(model, glm::vec3(5.0f, 0.0f, 0.0f));
 model = glm::rotate(model, (float)glfwGetTime() * 4.5f, glm::vec3(0.0, 1.0, 0.0));
 glUniformMatrix4fv(glGetUniformLocation(modelShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+
+
+glUniform3f(glGetUniformLocation(modelShader.ID, "dirLight.direction"), -0.2f, -1.0f, -0.3f);		
+glUniform3f(glGetUniformLocation(modelShader.ID, "dirLight.ambient"), 0.3f, 0.24f, 0.14f);	
+glUniform3f(glGetUniformLocation(modelShader.ID, "dirLight.diffuse"), 0.7f, 0.42f, 0.26f); 
+glUniform3f(glGetUniformLocation(modelShader.ID, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+// // Point Light
+glUniform3f(glGetUniformLocation(modelShader.ID, "pointLights[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);		
+glUniform3f(glGetUniformLocation(modelShader.ID, "pointLights[0].ambient"), pointLightColors[0].x * 0.1,  pointLightColors[0].y * 0.1,  pointLightColors[0].z * 0.1);		
+glUniform3f(glGetUniformLocation(modelShader.ID, "pointLights[0].diffuse"), pointLightColors[0].x,  pointLightColors[0].y,  pointLightColors[0].z); 
+glUniform3f(glGetUniformLocation(modelShader.ID, "pointLights[0].specular"), pointLightColors[0].x,  pointLightColors[0].y,  pointLightColors[0].z);
+glUniform1f(glGetUniformLocation(modelShader.ID, "pointLights[0].constant"), 1.0f);
+glUniform1f(glGetUniformLocation(modelShader.ID, "pointLights[0].linear"), 0.09);
+glUniform1f(glGetUniformLocation(modelShader.ID, "pointLights[0].quadratic"), 0.032);	
 modelObjectMercury.Draw(modelShader);
 
 // Planets

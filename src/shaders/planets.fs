@@ -9,7 +9,6 @@ struct Material {
 
 struct DirLight {
     vec3 direction;
-	
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -17,11 +16,9 @@ struct DirLight {
 
 struct PointLight {
     vec3 position;
-    
     float constant;
     float linear;
     float quadratic;
-	
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -51,23 +48,12 @@ void main()
     vec3 norm = normalize(Normal);
     vec3 viewDir = normalize(viewPos - FragPos);
     
-    // == =====================================================
-    // Our lighting is set up in 3 phases: directional, point lights and an optional flashlight
-    // For each phase, a calculate function is defined that calculates the corresponding color
-    // per lamp. In the main() function we take all the calculated colors and sum them up for
-    // this fragment's final color.
-    // == =====================================================
-    // phase 1: directional lighting
     vec3 result = CalcDirLight(dirLight, norm, viewDir);
-    // phase 2: point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);    
-  
-  
     
+    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+        result += CalcPointLight(pointLights[i], norm, FragPos, viewDir);   
     FragColor = vec4(result, 1.0);
 }
-
 // calculates the color when using a directional light.
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
