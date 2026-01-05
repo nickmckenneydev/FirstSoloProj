@@ -158,8 +158,6 @@ sunGLTF.Draw(planets);
 glBindVertexArray(PlanetsVAO);
 glActiveTexture(GL_TEXTURE0);
 glBindTexture(GL_TEXTURE_2D, PurpleDiffuseMap);
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
 planets.setVec3("viewPos", camera.Position);
 model = glm::mat4(1.0f);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
