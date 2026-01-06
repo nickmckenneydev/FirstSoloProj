@@ -132,6 +132,7 @@ glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * s
 glEnableVertexAttribArray(2);
 //Purple!
 glEnable(GL_DEPTH_TEST);
+glDepthFunc(GL_LESS);
 while (!glfwWindowShouldClose(window))
 {
 float currentFrame = static_cast<float>(glfwGetTime());
@@ -140,7 +141,7 @@ lastFrame = currentFrame;
 
 processInput(window);
 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//
 // view/projection transformations
 glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 glm::mat4 view = camera.GetViewMatrix();
