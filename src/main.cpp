@@ -58,11 +58,7 @@ if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 std::cout << "Failed to initialize GLAD" << std::endl;
 return -1;
 }
-   glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+glEnable(GL_DEPTH_TEST);
 Shader planets("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/planets.fs");
 Shader shaderSingleColor("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs","/home/a/Desktop/FirstSoloProj/src/shaders/shaderSingleColor.fs");
 Model modelObjectMercury("/home/a/Desktop/FirstSoloProj/src/objects/mercury/Mercury 1K.obj");
@@ -136,9 +132,11 @@ glEnableVertexAttribArray(1);
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 glEnableVertexAttribArray(2);
 //Purple!
-
-
-
+glEnable(GL_DEPTH_TEST);
+glDepthFunc(GL_LESS);
+glEnable(GL_STENCIL_TEST);
+glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 while (!glfwWindowShouldClose(window))
 {
 float currentFrame = static_cast<float>(glfwGetTime());
@@ -147,25 +145,15 @@ lastFrame = currentFrame;
 
 processInput(window);
 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT); // don't forget to clear the stencil buffer!
-        // set uniforms
-        shaderSingleColor.use();
-        glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = camera.GetViewMatrix();
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        shaderSingleColor.setMat4("view", view);
-        shaderSingleColor.setMat4("projection", projection);
-      
-
-
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 // view/projection transformations
-projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-view = camera.GetViewMatrix();
+glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+glm::mat4 view = camera.GetViewMatrix();
 
 glUseProgram(planets.ID);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
-model = glm::mat4(1.0f);
+glm::mat4 model = glm::mat4(1.0f);
 // Render Sun Model
 model = glm::mat4(1.0f);
 model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));	
