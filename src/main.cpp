@@ -131,12 +131,8 @@ glEnableVertexAttribArray(1);
 // texture attribute
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 glEnableVertexAttribArray(2);
-//Purple!
-glEnable(GL_DEPTH_TEST);
-glDepthFunc(GL_LESS);
-glEnable(GL_STENCIL_TEST);
-glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+
 while (!glfwWindowShouldClose(window))
 {
 float currentFrame = static_cast<float>(glfwGetTime());
