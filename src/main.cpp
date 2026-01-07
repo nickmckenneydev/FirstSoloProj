@@ -27,6 +27,10 @@ unsigned int loadTexture(const char *path);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
+
+
+
+
 Camera camera(glm::vec3(0.0f, 1.0f, 10.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
@@ -59,6 +63,12 @@ std::cout << "Failed to initialize GLAD" << std::endl;
 return -1;
 }
 glEnable(GL_DEPTH_TEST);
+glEnable(GL_STENCIL_TEST);
+glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);// This will make it whe  both test and stencil pass. Will use ref value specified by stencil fuction
+
+glDepthFunc(GL_LESS);
+
+glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
 Shader planets("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/planets.fs");
 Shader shaderSingleColor("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs","/home/a/Desktop/FirstSoloProj/src/shaders/shaderSingleColor.fs");
 Model modelObjectMercury("/home/a/Desktop/FirstSoloProj/src/objects/mercury/Mercury 1K.obj");
@@ -141,7 +151,7 @@ lastFrame = currentFrame;
 
 processInput(window);
 glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT| GL_STENCIL_BUFFER_BIT);
 // view/projection transformations
 glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 glm::mat4 view = camera.GetViewMatrix();
@@ -155,42 +165,8 @@ model = glm::mat4(1.0f);
 model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));	
 glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
 sunGLTF.Draw(planets);
-// Planets
-glBindVertexArray(PlanetsVAO);
-glActiveTexture(GL_TEXTURE0);
-glBindTexture(GL_TEXTURE_2D, PurpleDiffuseMap);
-planets.setVec3("viewPos", camera.Position);
-model = glm::mat4(1.0f);
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-planets.setInt("material.diffuse",0);
-planets.setInt("material.specular", 1);
-planets.setFloat("material.shininess", 3.0f);
-glUniform3f(glGetUniformLocation(planets.ID, "dirLight.direction"), -0.2f, -1.0f, -0.3f);		
-glUniform3f(glGetUniformLocation(planets.ID, "dirLight.ambient"), 0.3f, 0.24f, 0.14f);	
-glUniform3f(glGetUniformLocation(planets.ID, "dirLight.diffuse"), 0.7f, 0.42f, 0.26f); 
-glUniform3f(glGetUniformLocation(planets.ID, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
-// // Point light 1
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].position"), pointLightPositions[0].x, pointLightPositions[0].y, pointLightPositions[0].z);		
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].ambient"), pointLightColors[0].x * 0.1,  pointLightColors[0].y * 0.1,  pointLightColors[0].z * 0.1);		
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].diffuse"), pointLightColors[0].x,  pointLightColors[0].y,  pointLightColors[0].z); 
-glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].specular"), pointLightColors[0].x,  pointLightColors[0].y,  pointLightColors[0].z);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].constant"), 1.0f);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].linear"), 0.09);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);		
-model = glm::translate(model, pointLightPositions[0]);
-model = glm::scale(model, glm::vec3(1.3f));
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-glDrawArrays(GL_TRIANGLES, 0, 36);  
-glBindVertexArray(0);
-glActiveTexture(0);
-// Render Mercury Model
-model = glm::mat4(1.0f);
-model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));	
-model = glm::rotate(model, (float)glfwGetTime() * glm::radians(30.0f), glm::vec3(0.0, 1.0, 0.0));
-model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-model = glm::rotate(model, (float)glfwGetTime() * 4.5f, glm::vec3(0.0, 1.0, 0.0));
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-modelObjectMercury.Draw(planets);
+
+
 
 glfwSwapBuffers(window);
 glfwPollEvents();
