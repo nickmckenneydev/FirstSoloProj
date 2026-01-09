@@ -69,13 +69,8 @@ Shader shaderSingleColor("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs",
 Model modelObjectMercury("/home/a/Desktop/FirstSoloProj/src/objects/mercury/Mercury 1K.obj");
 Model sunGLTF("/home/a/Desktop/FirstSoloProj/src/objects/sun/scene.gltf");
 unsigned int PurpleDiffuseMap=loadTexture("/home/a/Desktop/FirstSoloProj/src/purple.jpeg");
-   // configure global opengl state
-    // -----------------------------
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);// This will make it whe  both test and stencil pass. Will use ref value specified by stencil fuction
+unsigned int SunPng=loadTexture("/home/a/Desktop/FirstSoloProj/src/sun.png");
+
 float vertices[] = {
     // positions          // normals           // texture coords
     -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
@@ -150,24 +145,16 @@ deltaTime = currentFrame - lastFrame;
 lastFrame = currentFrame;
 
 processInput(window);
-		// Specify the color of the background
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-		// Clean the back buffer and depth buffer
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-// view/projection transformations
-glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-glm::mat4 view = camera.GetViewMatrix();
+glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+// glClearStencil(0);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 glUseProgram(planets.ID);
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "view"), 1, GL_FALSE, &view[0][0]);
-glm::mat4 model = glm::mat4(1.0f);
 // Planet Global
 glUniform3fv(glGetUniformLocation(planets.ID, "viewPos"), 1, &camera.Position[0]); 
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
 glUniform1i(glGetUniformLocation(planets.ID, "material.diffuse"), 0); 
-glUniform1i(glGetUniformLocation(planets.ID, "material.diffuse"), 0); 
-glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 3.0f); 
+glUniform1i(glGetUniformLocation(planets.ID, "material.specular"), 1); 
+glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 5.0f); 
 glUniform3f(glGetUniformLocation(planets.ID, "dirLight.direction"), -0.2f, -1.0f, -0.3f);		
 glUniform3f(glGetUniformLocation(planets.ID, "dirLight.ambient"), 0.3f, 0.24f, 0.14f);	
 glUniform3f(glGetUniformLocation(planets.ID, "dirLight.diffuse"), 0.7f, 0.42f, 0.26f); 
@@ -179,41 +166,85 @@ glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].diffuse"), pointLig
 glUniform3f(glGetUniformLocation(planets.ID, "pointLights[0].specular"), pointLightColors[0].x,  pointLightColors[0].y,  pointLightColors[0].z);
 glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].constant"), 1.0f);
 glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].linear"), 0.09);
-glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);		
+glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);	
+
+// view/projection transformations
+glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+glm::mat4 view = camera.GetViewMatrix();
+planets.setMat4("projection", projection);
+planets.setMat4("view", view);
+//Every pixel of the next object drawn will be painted directly onto the screen, 
+// glStencilMask(0x00), the guard locks the buffer.
+// glStencilMask(0xFF), the guard allows you to write new values (like 1s)
+
+// glEnable(GL_DEPTH_TEST);
+// glEnable(GL_STENCIL_TEST);
+// glStencilMask(0xFF);
+
+// glStencilOp(GL_KEEP,GL_KEEP,GL_REPLACE);
+// glStencilFunc(GL_ALWAYS,1,0xFF);
+
+//Render SMALL Green Planet
+
+
+
+glm::mat4 model = glm::mat4(1.0f);
+planets.setMat4("model", model);
+model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, SunPng);
+
+glBindVertexArray(PlanetsVAO);
+
+
+glDrawArrays(GL_TRIANGLES, 0, 36);
+
+
+
+//Render BIG Purple Planet 
+
+// glUseProgram(planets.ID);
+
+// model = glm::mat4(1.0f);
+// model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+// model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));
+// glBindVertexArray(PlanetsVAO);
+// glActiveTexture(GL_TEXTURE0);
+// glBindTexture(GL_TEXTURE_2D,PurpleDiffuseMap);
+// planets.setMat4("model",model);
+// glDrawArrays(GL_TRIANGLES, 0, 36);
 
 // Render Sun Model
-model = glm::mat4(1.0f);
-model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));	
-glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-// Make it so the stencil test always passes
-glStencilFunc(GL_ALWAYS, 1, 0xFF);
-// Enable modifying of the stencil buffer
-glStencilMask(0xFF);
-sunGLTF.Draw(planets);
+// model = glm::mat4(1.0f);
+// model = glm::scale(model, glm::vec3(0.20f, 0.20f, 0.20f));	
+// glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
+// sunGLTF.Draw(planets);
 
-// 2nd. render pass: Outline
-glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-glStencilMask(0x00);
-glDisable(GL_DEPTH_TEST);
 
-shaderSingleColor.use(); // Switch shader
-shaderSingleColor.setMat4("projection", projection);
-shaderSingleColor.setMat4("view", view);
+// // 2nd render pass which is my outline
+// glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+// glStencilMask(0x00);
+// glDisable(GL_DEPTH_TEST);
+// shaderSingleColor.use(); // Im switching shader
+// shaderSingleColor.setMat4("projection", projection);
+// shaderSingleColor.setMat4("view", view);
+// model = glm::mat4(1.0f);
+// model = glm::scale(model, glm::vec3(0.27f, 0.27f, 0.27f)); 
+// shaderSingleColor.setMat4("model", model);
+// sunGLTF.Draw(shaderSingleColor);
+// // Reset state
+// glStencilMask(0xFF);
+// glStencilFunc(GL_ALWAYS, 0, 0xFF);
+// glEnable(GL_DEPTH_TEST);  
 
-model = glm::mat4(1.0f);
 
-model = glm::scale(model, glm::vec3(0.27f, 0.27f, 0.27f)); // Slightly larger than 0.25f
-shaderSingleColor.setMat4("model", model);
 
-sunGLTF.Draw(shaderSingleColor);
 
-// Reset state
-glStencilMask(0xFF);
-glStencilFunc(GL_ALWAYS, 0, 0xFF);
-glEnable(GL_DEPTH_TEST);
-    
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+
+glfwSwapBuffers(window);
+glfwPollEvents();
 }
 glDeleteProgram(planets.ID);
 glDeleteBuffers(1, &VBO);
