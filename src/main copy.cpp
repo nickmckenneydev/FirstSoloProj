@@ -115,37 +115,30 @@ int main()
 
     float viewplane_vertices[] = {
         // positions          // normals           // texture coords
-        // RIGHT FACE (x = 0.5f)
-        0.5f, 0.3f, -0.3f, 1.0f, 0.0f, 0.0f, 0.625f, 0.5f,
-        0.5f, -0.3f, 0.3f, 1.0f, 0.0f, 0.0f, 0.375f, 0.75f,
-        0.5f, -0.3f, -0.3f, 1.0f, 0.0f, 0.0f, 0.375f, 0.5f,
-        0.5f, 0.3f, -0.3f, 1.0f, 0.0f, 0.0f, 0.625f, 0.5f,
-        0.5f, 0.3f, 0.3f, 1.0f, 0.0f, 0.0f, 0.625f, 0.75f,
-        0.5f, -0.3f, 0.3f, 1.0f, 0.0f, 0.0f, 0.375f, 0.75f,
-
-        // FRONT FACE (z = 0.5f)
-        0.3f, 0.3f, 0.5f, 0.0f, 0.0f, 1.0f, 0.625f, 0.75f,
-        -0.3f, -0.3f, 0.5f, 0.0f, 0.0f, 1.0f, 0.375f, 1.0f,
-        0.3f, -0.3f, 0.5f, 0.0f, 0.0f, 1.0f, 0.375f, 0.75f,
-        0.3f, 0.3f, 0.5f, 0.0f, 0.0f, 1.0f, 0.625f, 0.75f,
-        -0.3f, 0.3f, 0.5f, 0.0f, 0.0f, 1.0f, 0.625f, 1.0f,
-        -0.3f, -0.3f, 0.5f, 0.0f, 0.0f, 1.0f, 0.375f, 1.0f,
-
-        // LEFT FACE (x = -0.5f)
-        -0.5f, 0.3f, 0.3f, -1.0f, 0.0f, 0.0f, 0.625f, 0.5f,
-        -0.5f, -0.3f, -0.3f, -1.0f, 0.0f, 0.0f, 0.375f, 0.75f,
-        -0.5f, -0.3f, 0.3f, -1.0f, 0.0f, 0.0f, 0.375f, 0.5f,
-        -0.5f, 0.3f, 0.3f, -1.0f, 0.0f, 0.0f, 0.625f, 0.5f,
-        -0.5f, 0.3f, -0.3f, -1.0f, 0.0f, 0.0f, 0.625f, 0.75f,
-        -0.5f, -0.3f, -0.3f, -1.0f, 0.0f, 0.0f, 0.375f, 0.75f,
-
-        // BACK FACE (z = -0.5f)
-        0.3f, 0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.625f, 0.75f,
-        -0.3f, -0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.375f, 1.0f,
-        -0.3f, 0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.375f, 0.75f,
-        0.3f, 0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.625f, 0.75f,
-        0.3f, -0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.625f, 1.0f,
-        -0.3f, -0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.375f, 1.0f};
+        5.037688f, 1.811482f, -3.879325f, -1.0f, 0.0f, 0.0f, 0.625f, 0.5f,
+        5.037688f, -1.861532f, 3.997477f, -1.0f, 0.0f, 0.0f, 0.375f, 0.75f,
+        5.037688f, -3.963426f, -1.777431f, -1.0f, 0.0f, 0.0f, 0.375f, 0.5f,
+        3.317312f, 2.825909f, 5.059076f, 0.0f, 0.0f, -1.0f, 0.625f, 0.75f,
+        -3.241937f, -2.875959f, 5.059076f, 0.0f, 0.0f, -1.0f, 0.375f, 1.0f,
+        2.888622f, -3.304650f, 5.059076f, 0.0f, 0.0f, -1.0f, 0.375f, 0.75f,
+        -4.962311f, 3.047739f, 3.131842f, 1.0f, 0.0f, 0.0f, 0.625f, 0.5f,
+        -4.962314f, -3.097789f, -3.013686f, 1.0f, 0.0f, 0.0f, 0.375f, 0.75f,
+        -4.962311f, -3.097789f, 3.131842f, 1.0f, 0.0f, 0.0f, 0.375f, 0.5f,
+        0.037686f, 4.320519f, -4.940923f, 0.0f, 0.0f, 1.0f, 0.625f, 0.75f,
+        0.037686f, -4.370569f, -4.940926f, 0.0f, 0.0f, 1.0f, 0.375f, 1.0f,
+        -4.307858f, -0.025025f, -4.940923f, 0.0f, 0.0f, 1.0f, 0.375f, 0.75f,
+        0.037686f, 4.320519f, -4.940923f, 0.0f, 0.0f, 1.0f, 0.625f, 0.75f,
+        4.383231f, -0.025025f, -4.940926f, 0.0f, 0.0f, 1.0f, 0.625f, 1.0f,
+        0.037686f, -4.370569f, -4.940926f, 0.0f, 0.0f, 1.0f, 0.375f, 1.0f,
+        5.037688f, 1.811482f, -3.879325f, -1.0f, 0.0f, 0.0f, 0.625f, 0.5f,
+        5.037688f, 3.913376f, 1.895583f, -1.0f, 0.0f, 0.0f, 0.625f, 0.75f,
+        5.037688f, -1.861532f, 3.997477f, -1.0f, 0.0f, 0.0f, 0.375f, 0.75f,
+        3.317312f, 2.825909f, 5.059076f, 0.0f, 0.0f, -1.0f, 0.625f, 0.75f,
+        -2.813246f, 3.254599f, 5.059076f, 0.0f, 0.0f, -1.0f, 0.625f, 1.0f,
+        -3.241937f, -2.875959f, 5.059076f, 0.0f, 0.0f, -1.0f, 0.375f, 1.0f,
+        -4.962311f, 3.047739f, 3.131842f, 1.0f, 0.0f, 0.0f, 0.625f, 0.5f,
+        -4.962314f, 3.047739f, -3.013686f, 1.0f, 0.0f, 0.0f, 0.625f, 0.75f,
+        -4.962314f, -3.097789f, -3.013686f, 1.0f, 0.0f, 0.0f, 0.375f, 0.75f};
     glm::vec3 pointLightPositions[] = {
         glm::vec3(8.0f, 0.0f, 0.0f),
     };
@@ -171,7 +164,7 @@ int main()
     glGenBuffers(1, &VBO);
     glBindVertexArray(customVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(viewplane_vertices), viewplane_vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
     glEnableVertexAttribArray(0);
@@ -231,11 +224,11 @@ int main()
         glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].linear"), 0.09);
         glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);
 
-        // PURPLE PLANES
-        glEnable(GL_DEPTH_TEST);
+        // PURPLE CUBE
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
         planets.use();
         glBindVertexArray(customVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -243,14 +236,12 @@ int main()
         planets.setVec3("viewPos", camera.Position);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f));
+        model = glm::scale(model, glm::vec3(3.3f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // OUTER CUBE
-        glEnable(GL_DEPTH_TEST);
-
-        glStencilMask(0xFF);
+        glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         planets.use();
         glBindVertexArray(PlanetsVAO);
@@ -259,7 +250,7 @@ int main()
         planets.setVec3("viewPos", camera.Position);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f));
+        model = glm::scale(model, glm::vec3(5.3f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
