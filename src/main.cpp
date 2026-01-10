@@ -265,11 +265,11 @@ int main()
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
-        glDepthMask(GL_TRUE);
+
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
+        glDepthMask(GL_FALSE);
         planets.use();
         glBindVertexArray(customVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -283,6 +283,7 @@ int main()
         // OUTER CUBE SHELL FRONT
         glDisable(GL_CULL_FACE);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
         glDepthMask(GL_TRUE);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
@@ -297,18 +298,17 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
+        // Render Sun Model
+
+        glDisable(GL_STENCIL_TEST);
+        glDepthFunc(GL_LESS); // Standard depth test
+        model = glm::mat4(1.0f);
+        model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+        glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        sunGLTF.Draw(planets);
         // Reset state
         glStencilMask(0xFF);
-        // Render Sun Model
-        // model = glm::mat4(1.0f);
-        // model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
-        // glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        // // Make it so the stencil test always passes
-        // glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        // // Enable modifying of the stencil buffer
-        // glStencilMask(0xFF);
-        // sunGLTF.Draw(planets);
-
         // planets.use();
         // Render Mercury Model
         // model = glm::mat4(1.0f);
