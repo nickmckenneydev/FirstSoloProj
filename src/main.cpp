@@ -231,11 +231,9 @@ int main()
         glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);
 
         // PURPLE PLANES/Portal
-        // IF I DONT HAVE A BUFFER DONT HAVE TESTING
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
-
         glEnable(GL_STENCIL_TEST);
         glDepthMask(GL_FALSE);
         glStencilMask(0xFF);               // Im masking to everything
