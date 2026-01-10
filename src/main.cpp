@@ -233,8 +233,9 @@ int main()
 
         // purple plane back
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
+        glCullFace(GL_FRONT); // SEES INSIDE
         glFrontFace(GL_CCW);
+
         glEnable(GL_STENCIL_TEST);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         planets.use();
@@ -249,7 +250,7 @@ int main()
 
         // OUTER CUBE SHELL BACK
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT);
+        glCullFace(GL_FRONT); // SEES INSIDE
         glFrontFace(GL_CCW);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         glDepthMask(GL_TRUE);
