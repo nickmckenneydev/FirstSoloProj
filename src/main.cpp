@@ -235,6 +235,7 @@ int main()
         glEnable(GL_DEPTH_TEST);
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
+
         planets.use();
         glBindVertexArray(customVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -257,7 +258,7 @@ int main()
         planets.setVec3("viewPos", camera.Position);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.0f));
+        model = glm::scale(model, glm::vec3(0.9f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
