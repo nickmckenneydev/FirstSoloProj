@@ -235,7 +235,6 @@ int main()
         glEnable(GL_DEPTH_TEST);
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
         planets.use();
         glBindVertexArray(customVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -248,9 +247,8 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // OUTER CUBE
-        glEnable(GL_DEPTH_TEST);
 
-        glStencilMask(0xFF);
+        glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         planets.use();
         glBindVertexArray(PlanetsVAO);
