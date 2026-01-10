@@ -232,6 +232,10 @@ int main()
 
         // PURPLE PLANES/Portal
         // IF I DONT HAVE A BUFFER DONT HAVE TESTING
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
+
         glEnable(GL_STENCIL_TEST);
         glDepthMask(GL_FALSE);
         glStencilMask(0xFF);               // Im masking to everything
@@ -250,13 +254,12 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 24);
 
         // OUTER CUBE
+        glDisable(GL_CULL_FACE);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
         glDepthMask(GL_TRUE);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
         planets.use();
         glBindVertexArray(PlanetsVAO);
         glActiveTexture(GL_TEXTURE0);
