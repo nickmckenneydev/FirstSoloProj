@@ -232,7 +232,7 @@ int main()
         glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);
 
         // PURPLE PLANES
-        glEnable(GL_DEPTH_TEST);
+
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -251,8 +251,6 @@ int main()
 
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glStencilMask(0x00);
-        glDisable(GL_DEPTH_TEST); // Usually for outlines, you want to draw OVER things
-        glDisable(GL_CULL_FACE);
         planets.use();
         glBindVertexArray(PlanetsVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -263,9 +261,9 @@ int main()
         model = glm::scale(model, glm::vec3(1.1f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // Reset state
         glEnable(GL_DEPTH_TEST);
-
         glStencilMask(0xFF);
         // Render Sun Model
         // model = glm::mat4(1.0f);
