@@ -185,11 +185,6 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-    // configure global opengl state
-    // -----------------------------
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glEnable(GL_STENCIL_TEST);
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -197,13 +192,7 @@ int main()
         lastFrame = currentFrame;
 
         processInput(window);
-        // Specify the color of the background
-        glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-        // Clean the back buffer and depth buffer
-        glClearStencil(0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glEnable(GL_STENCIL_TEST);
-        glEnable(GL_DEPTH_TEST);
+
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
@@ -230,26 +219,18 @@ int main()
         glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].constant"), 1.0f);
         glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].linear"), 0.09);
         glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);
-
-        // purple plane back
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT); // SEES INSIDE
-        glFrontFace(GL_CCW);
-
+        //
+        // Specify the color of the background
+        glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+        // Clean the back buffer and depth buffer
+        glClearStencil(0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glEnable(GL_STENCIL_TEST);
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        planets.use();
-        glBindVertexArray(customVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, PurpleDiffuseMap);
-        planets.setVec3("viewPos", camera.Position);
-        model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(1.0f));
-        glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        glDrawArrays(GL_TRIANGLES, 0, 24);
 
-        // OUTER CUBE SHELL BACK
+        // 1. Setup global state
+        glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
+        // OUTER CUBE SHELL BACK
         glCullFace(GL_FRONT); // SEES INSIDE
         glFrontFace(GL_CCW);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -267,6 +248,22 @@ int main()
         model = glm::scale(model, glm::vec3(1.0f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        // purple plane back
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT); // SEES INSIDE
+        glFrontFace(GL_CCW);
+
+        glEnable(GL_STENCIL_TEST);
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        planets.use();
+        glBindVertexArray(customVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, PurpleDiffuseMap);
+        planets.setVec3("viewPos", camera.Position);
+        model = glm::mat4(1.0f);
+        model = glm::scale(model, glm::vec3(1.0f));
+        glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        glDrawArrays(GL_TRIANGLES, 0, 24);
 
         // PURPLE PLANES FRONT
         glEnable(GL_CULL_FACE);
