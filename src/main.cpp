@@ -266,6 +266,7 @@ int main()
         model = glm::scale(model, glm::vec3(1.0f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        //---------------------------------------------------------------------------------------------------//
         glClearStencil(0);
         glClear(GL_STENCIL_BUFFER_BIT);
         //---------------------------------------------------------------------------------------------------//
