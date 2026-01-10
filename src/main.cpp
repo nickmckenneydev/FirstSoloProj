@@ -202,7 +202,8 @@ int main()
         // Clean the back buffer and depth buffer
         glClearStencil(0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
+        glEnable(GL_STENCIL_TEST);
+        glEnable(GL_DEPTH_TEST);
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
@@ -233,10 +234,9 @@ int main()
         // purple plane back
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
-        glFrontFace(GL_CW);
+        glFrontFace(GL_CCW);
         glEnable(GL_STENCIL_TEST);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
         planets.use();
         glBindVertexArray(customVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -247,10 +247,10 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 24);
 
-        // OUTER CUBE
+        // OUTER CUBE SHELL BACK
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT);
-        glFrontFace(GL_CW);
+        glFrontFace(GL_CCW);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         glDepthMask(GL_TRUE);
         glStencilMask(0x00);
@@ -266,13 +266,15 @@ int main()
         model = glm::scale(model, glm::vec3(1.0f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        // PURPLE PLANES/Portal
+        glClearStencil(0);
+        glClear(GL_STENCIL_BUFFER_BIT);
+        //---------------------------------------------------------------------------------------------------//
+        // PURPLE PLANES FRONT
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
-        glFrontFace(GL_CW);
+        glFrontFace(GL_CCW);
         glEnable(GL_STENCIL_TEST);
-        glDepthMask(GL_FALSE);
+        glDepthMask(GL_TRUE);
         glStencilMask(0xFF);               // Im masking to everything
         glStencilFunc(GL_ALWAYS, 1, 0xFF); // Writing 1 to all PLANES
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -288,7 +290,7 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 24);
 
-        // OUTER CUBE
+        // OUTER CUBE SHELL FRONT
         glDisable(GL_CULL_FACE);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         glDepthMask(GL_TRUE);
