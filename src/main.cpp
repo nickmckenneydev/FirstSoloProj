@@ -190,8 +190,6 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
     glEnable(GL_STENCIL_TEST);
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     while (!glfwWindowShouldClose(window))
     {
         float currentFrame = static_cast<float>(glfwGetTime());
@@ -202,6 +200,7 @@ int main()
         // Specify the color of the background
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
         // Clean the back buffer and depth buffer
+        glClearStencil(0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         // view/projection transformations
@@ -231,11 +230,14 @@ int main()
         glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].linear"), 0.09);
         glUniform1f(glGetUniformLocation(planets.ID, "pointLights[0].quadratic"), 0.032);
 
-        // PURPLE PLANES
-
-        glStencilMask(0xFF);
-        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        // PURPLE PLANES/Portal
+        // IF I DONT HAVE A BUFFER DONT HAVE TESTING
+        glEnable(GL_STENCIL_TEST);
+        glDepthMask(GL_FALSE);
+        glStencilMask(0xFF);               // Im masking to everything
+        glStencilFunc(GL_ALWAYS, 1, 0xFF); // Writing 1 to all PLANES
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         planets.use();
         glBindVertexArray(customVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -248,9 +250,13 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 24);
 
         // OUTER CUBE
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glDepthMask(GL_TRUE);
         glStencilMask(0x00);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
         planets.use();
         glBindVertexArray(PlanetsVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -258,7 +264,7 @@ int main()
         planets.setVec3("viewPos", camera.Position);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(1.1f));
+        model = glm::scale(model, glm::vec3(1.0f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
