@@ -115,6 +115,7 @@ int main()
 
     float viewplane_vertices[] = {
         // positions          // normals           // texture coords
+
         // RIGHT FACE (x = 0.5f)
         0.5f, 0.3f, -0.3f, 1.0f, 0.0f, 0.0f, 0.625f, 0.5f,
         0.5f, -0.3f, 0.3f, 1.0f, 0.0f, 0.0f, 0.375f, 0.75f,
@@ -145,7 +146,9 @@ int main()
         -0.3f, 0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.375f, 0.75f,
         0.3f, 0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.625f, 0.75f,
         0.3f, -0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.625f, 1.0f,
-        -0.3f, -0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.375f, 1.0f};
+        -0.3f, -0.3f, -0.5f, 0.0f, 0.0f, -1.0f, 0.375f, 1.0f
+
+    };
     glm::vec3 pointLightPositions[] = {
         glm::vec3(8.0f, 0.0f, 0.0f),
     };
@@ -242,12 +245,14 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(1.0f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawArrays(GL_TRIANGLES, 0, 24);
 
         // OUTER CUBE
 
-        glStencilMask(0xFF);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        glDisable(GL_DEPTH_TEST); // Usually for outlines, you want to draw OVER things
+        glDisable(GL_CULL_FACE);
         planets.use();
         glBindVertexArray(PlanetsVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -258,7 +263,10 @@ int main()
         model = glm::scale(model, glm::vec3(1.1f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+        // Reset state
+        glEnable(GL_DEPTH_TEST);
 
+        glStencilMask(0xFF);
         // Render Sun Model
         // model = glm::mat4(1.0f);
         // model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
