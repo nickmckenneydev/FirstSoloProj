@@ -230,14 +230,15 @@ int main()
         // 1. Setup global state
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
-        // OUTER CUBE SHELL BACK
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        // BACK LOGIC
         glCullFace(GL_FRONT); // SEES INSIDE
         glFrontFace(GL_CCW);
+        // OUTER CUBE SHELL BACK
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         glDepthMask(GL_TRUE);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
         planets.use();
         glBindVertexArray(PlanetsVAO);
@@ -249,11 +250,6 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         // purple plane back
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT); // SEES INSIDE
-        glFrontFace(GL_CCW);
-
-        glEnable(GL_STENCIL_TEST);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         planets.use();
         glBindVertexArray(customVAO);
@@ -269,11 +265,9 @@ int main()
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
-        glEnable(GL_STENCIL_TEST);
         glDepthMask(GL_TRUE);
-        glStencilMask(0xFF);               // Im masking to everything
-        glStencilFunc(GL_ALWAYS, 1, 0xFF); // Writing 1 to all PLANES
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
         planets.use();
@@ -292,7 +286,6 @@ int main()
         glDepthMask(GL_TRUE);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
         planets.use();
         glBindVertexArray(PlanetsVAO);
@@ -303,11 +296,9 @@ int main()
         model = glm::scale(model, glm::vec3(1.0f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // Reset state
-        glEnable(GL_DEPTH_TEST);
-        glDisable(GL_STENCIL_TEST);
         glStencilMask(0xFF);
-        glCullFace(GL_BACK); // Back to normal
         // Render Sun Model
         // model = glm::mat4(1.0f);
         // model = glm::scale(model, glm::vec3(0.25f, 0.25f, 0.25f));
