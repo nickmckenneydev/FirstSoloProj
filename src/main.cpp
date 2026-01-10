@@ -228,18 +228,21 @@ int main()
         glEnable(GL_STENCIL_TEST);
 
         // 1. Setup global state
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_CULL_FACE);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glEnable(GL_DEPTH_TEST); // This is done after stencil TESTing. I can use gl_FragCoord in fragment shader
+                                 // use z value
+        glDepthFunc(GL_LESS);    // Standard depth test
+
+        glEnable(GL_CULL_FACE);
         // BACK LOGIC
         glCullFace(GL_FRONT); // SEES INSIDE
         glFrontFace(GL_CCW);
+
         // OUTER CUBE SHELL BACK
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         glDepthMask(GL_TRUE);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-
         planets.use();
         glBindVertexArray(PlanetsVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -249,6 +252,7 @@ int main()
         model = glm::scale(model, glm::vec3(1.0f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // purple plane back
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         planets.use();
@@ -265,7 +269,6 @@ int main()
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
-
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -301,7 +304,7 @@ int main()
         // Render Sun Model
 
         glDisable(GL_STENCIL_TEST);
-        glDepthFunc(GL_LESS); // Standard depth test
+
         model = glm::mat4(1.0f);
         model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
