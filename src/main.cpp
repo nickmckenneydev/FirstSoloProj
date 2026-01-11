@@ -22,6 +22,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
+void draw(Shader shadername, GLuint VAOname, unsigned int DiffuseMapname, int verticesCount);
+
 unsigned int loadTexture(const char *path);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
@@ -229,135 +231,60 @@ int main()
         // Setup global state
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-        // OUTER CUBE SHELL BACK
-        // CULLING
+        // BACK CUBE
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT); // SEES INSIDE
         glFrontFace(GL_CCW);
-        // END OF CULLING
-
-        // START OF DEPTH
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glDepthMask(GL_TRUE);
-        // END DEPTH
-
-        // START OF STENCILS
         glEnable(GL_STENCIL_TEST);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        // END OF STENCILS
-
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        draw(planets, PlanetsVAO, WallDiffuseMap, 36);
 
-        planets.use();
-        glBindVertexArray(PlanetsVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, WallDiffuseMap);
-        planets.setVec3("viewPos", camera.Position);
-        model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(1.0f));
-        glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        // BEHIND PURPLE PLANE
-
-        // START OF CULLING
+        // BACK PLANE
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT); // SEES INSIDE
         glFrontFace(GL_CCW);
-        // END OF CULLING
-
-        // START OF DEPTH
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glDepthMask(GL_TRUE);
-        // END DEPTH
-
-        // START OF STENCILS
         glEnable(GL_STENCIL_TEST);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        // END OF STENCILS
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        draw(planets, customVAO, PurpleDiffuseMap, 24);
 
-        planets.use();
-        glBindVertexArray(customVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, PurpleDiffuseMap);
-        planets.setVec3("viewPos", camera.Position);
-        model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(1.0f));
-        glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        glDrawArrays(GL_TRIANGLES, 0, 24);
-
-        // PURPLE PLANES FRONT
-
-        // CULLING
+        // FRONT PLANE
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
-        // END OF CULLING
-
-        // START OF DEPTH
         glDepthMask(GL_FALSE);   // DONT UPDATE BUFFER
         glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
         glDepthFunc(GL_LESS);
-        // END DEPTH
-
-        // START OF STENCILS
         glEnable(GL_STENCIL_TEST);
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        // END OF STENCILS
-
         // glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        draw(planets, customVAO, PurpleDiffuseMap, 24);
 
-        planets.use();
-        glBindVertexArray(customVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, PurpleDiffuseMap);
-        planets.setVec3("viewPos", camera.Position);
-        model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(1.0f));
-        glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        glDrawArrays(GL_TRIANGLES, 0, 24);
-
-        // OUTER CUBE SHELL FRONT
-
-        // CULLING
+        // FRONT CUBE
         glDisable(GL_CULL_FACE);
-        // END OF CULLING
-
-        // START OF DEPTH
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
         glDepthFunc(GL_LESS);
-        // END DEPTH
-
-        // START OF STENCILS
         glEnable(GL_STENCIL_TEST);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        // END OF STENCILS
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
-        planets.use();
-        glBindVertexArray(PlanetsVAO);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, WallDiffuseMap);
-        planets.setVec3("viewPos", camera.Position);
-        model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(1.0f));
-        glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        draw(planets, PlanetsVAO, WallDiffuseMap, 36);
 
         // Render Sun Model
-
         glDisable(GL_STENCIL_TEST);
-
         model = glm::mat4(1.0f);
         model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
@@ -383,6 +310,20 @@ int main()
     glfwTerminate();
     return 0;
 }
+
+void draw(Shader shadername, GLuint VAOname, unsigned int DiffuseMapname, int verticesCount)
+{
+    shadername.use();
+    glBindVertexArray(VAOname);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, DiffuseMapname);
+    shadername.setVec3("viewPos", camera.Position);
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::scale(model, glm::vec3(1.0f));
+    glUniformMatrix4fv(glGetUniformLocation(shadername.ID, "model"), 1, GL_FALSE, &model[0][0]);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
 void processInput(GLFWwindow *window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
