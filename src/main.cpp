@@ -22,7 +22,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 void processInput(GLFWwindow *window);
-void draw(Shader shadername, GLuint VAOname, unsigned int DiffuseMapname, int verticesCount);
+void draw(Shader shadername, GLuint VAOname, unsigned int DiffuseMapname, int verticesCount, unsigned int SpecularMapname = 0);
 
 unsigned int loadTexture(const char *path);
 const unsigned int SCR_WIDTH = 800;
@@ -206,8 +206,8 @@ int main()
         // Planet Global
         glUniform3fv(glGetUniformLocation(planets.ID, "viewPos"), 1, &camera.Position[0]);
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        glUniform1i(glGetUniformLocation(planets.ID, "material.diffuse"), 0);
-        glUniform1i(glGetUniformLocation(planets.ID, "material.diffuse"), 0);
+
+        glUniform1i(glGetUniformLocation(planets.ID, "material.specular"), 1);
         glUniform1f(glGetUniformLocation(planets.ID, "material.shininess"), 3.0f);
         glUniform3f(glGetUniformLocation(planets.ID, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
         glUniform3f(glGetUniformLocation(planets.ID, "dirLight.ambient"), 0.3f, 0.24f, 0.14f);
@@ -232,16 +232,16 @@ int main()
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
         // TWO PASS STRATEGY. INTERIOR FIRST AND EXTERIOR
         //  INTERIOR WINDOW
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT); // SEES interior
-        glFrontFace(GL_CCW);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-        glDepthMask(GL_FALSE); // DONT UPDATE BUFFER
-        glEnable(GL_STENCIL_TEST);
-        glStencilMask(0x00);
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        draw(planets, customVAO, WindowDiffuseMap, 24);
+        // glEnable(GL_CULL_FACE);
+        // glCullFace(GL_FRONT); // SEES interior
+        // glFrontFace(GL_CCW);
+        // glEnable(GL_DEPTH_TEST);
+        // glDepthFunc(GL_LESS);
+        // glDepthMask(GL_FALSE); // DONT UPDATE BUFFER
+        // glEnable(GL_STENCIL_TEST);
+        // glStencilMask(0x00);
+        // glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        // draw(planets, customVAO, WindowDiffuseMap, 24);
 
         // INTERIOR WALLS
         glEnable(GL_CULL_FACE);
@@ -251,10 +251,10 @@ int main()
         glDepthFunc(GL_LESS);
         glDepthMask(GL_FALSE); // DONT UPDATE BUFFER
         glEnable(GL_STENCIL_TEST);
-        glStencilMask(0xFF);
-        glStencilFunc(GL_EQUAL, 1, 0xFF);
+        glStencilMask(0x00);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        draw(planets, PlanetsVAO, WallDiffuseMap, 36);
+        draw(planets, PlanetsVAO, 1, 36);
 
         // EXTERIOR WINDOW
         glEnable(GL_CULL_FACE);
@@ -308,12 +308,26 @@ int main()
     return 0;
 }
 
-void draw(Shader shadername, GLuint VAOname, unsigned int DiffuseMapname, int verticesCount)
+void draw(Shader shadername, GLuint VAOname, unsigned int DiffuseMapname, int verticesCount, unsigned int SpecularMapname)
 {
     shadername.use();
     glBindVertexArray(VAOname);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, DiffuseMapname);
+    glUniform1i(glGetUniformLocation(shadername.ID, "material.diffuse"), 0);
+    if (DiffuseMapname == 1)
+    {
+        GLuint whiteTexture;
+        glGenTextures(1, &whiteTexture);
+        glBindTexture(GL_TEXTURE_2D, whiteTexture);
+        unsigned char white[] = {255, 255, 255, 255};
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, white);
+    }
+    // 2. Bind the Specular Map to Unit 1
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, SpecularMapname);
+    // Tell the shader: material.specular is on Unit 1
+    glUniform1i(glGetUniformLocation(shadername.ID, "material.specular"), 1);
     shadername.setVec3("viewPos", camera.Position);
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(1.0f));
