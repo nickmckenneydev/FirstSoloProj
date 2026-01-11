@@ -65,7 +65,7 @@ int main()
     Shader shaderSingleColor("/home/a/Desktop/FirstSoloProj/src/shaders/planets.vs", "/home/a/Desktop/FirstSoloProj/src/shaders/shaderSingleColor.fs");
     Model modelObjectMercury("/home/a/Desktop/FirstSoloProj/src/objects/mercury/Mercury 1K.obj");
     Model sunGLTF("/home/a/Desktop/FirstSoloProj/src/objects/sun/scene.gltf");
-    unsigned int PurpleDiffuseMap = loadTexture("/home/a/Desktop/FirstSoloProj/src/purple.jpeg");
+    unsigned int WindowDiffuseMap = loadTexture("/home/a/Desktop/FirstSoloProj/src/purple.jpeg");
     unsigned int WallDiffuseMap = loadTexture("/home/a/Desktop/FirstSoloProj/src/wall.jpg");
 
     // configure global opengl state
@@ -230,35 +230,34 @@ int main()
 
         // Setup global state
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-
-        // BACK CUBE
+        // TWO PASS STRATEGY. INTERIOR FIRST AND EXTERIOR
+        //  INTERIOR WINDOW
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT); // SEES INSIDE
+        glCullFace(GL_FRONT); // SEES interior
         glFrontFace(GL_CCW);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
-        glDepthMask(GL_TRUE);
+        glDepthMask(GL_FALSE);
         glEnable(GL_STENCIL_TEST);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        draw(planets, customVAO, WindowDiffuseMap, 24);
+
+        // INTERIOR WALLS
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT); // SEES interior
+        glFrontFace(GL_CCW);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glDepthMask(GL_FALSE);
+        glEnable(GL_STENCIL_TEST);
+        glStencilMask(0x00);
+        glStencilFunc(GL_EQUAL, 1, 0xFF);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         draw(planets, PlanetsVAO, WallDiffuseMap, 36);
 
-        // BACK PLANE
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT); // SEES INSIDE
-        glFrontFace(GL_CCW);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-        glDepthMask(GL_TRUE);
-        glEnable(GL_STENCIL_TEST);
-        glStencilMask(0x00);
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        draw(planets, customVAO, PurpleDiffuseMap, 24);
-
-        // FRONT PLANE
+        // EXTERIOR WINDOW
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
@@ -268,11 +267,10 @@ int main()
         glEnable(GL_STENCIL_TEST);
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        // glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        draw(planets, customVAO, PurpleDiffuseMap, 24);
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        draw(planets, customVAO, WindowDiffuseMap, 24);
 
-        // FRONT CUBE
+        // EXTERIOR WALLS
         glDisable(GL_CULL_FACE);
         glDepthMask(GL_TRUE);
         glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
@@ -286,7 +284,7 @@ int main()
         // Render Sun Model
         glDisable(GL_STENCIL_TEST);
         model = glm::mat4(1.0f);
-        model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+        model = glm::scale(model, glm::vec3(0.03f, 0.03f, 0.03f));
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         sunGLTF.Draw(planets);
