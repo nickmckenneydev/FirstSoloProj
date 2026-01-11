@@ -237,10 +237,9 @@ int main()
         glFrontFace(GL_CCW);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
-        glDepthMask(GL_FALSE);
+        glDepthMask(GL_FALSE); // DONT UPDATE BUFFER
         glEnable(GL_STENCIL_TEST);
         glStencilMask(0x00);
-        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         draw(planets, customVAO, WindowDiffuseMap, 24);
 
@@ -250,9 +249,9 @@ int main()
         glFrontFace(GL_CCW);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
-        glDepthMask(GL_FALSE);
+        glDepthMask(GL_FALSE); // DONT UPDATE BUFFER
         glEnable(GL_STENCIL_TEST);
-        glStencilMask(0x00);
+        glStencilMask(0xFF);
         glStencilFunc(GL_EQUAL, 1, 0xFF);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         draw(planets, PlanetsVAO, WallDiffuseMap, 36);
@@ -272,7 +271,7 @@ int main()
 
         // EXTERIOR WALLS
         glDisable(GL_CULL_FACE);
-        glDepthMask(GL_TRUE);
+        glDepthMask(GL_TRUE);    // update buffer
         glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
         glDepthFunc(GL_LESS);
         glEnable(GL_STENCIL_TEST);
