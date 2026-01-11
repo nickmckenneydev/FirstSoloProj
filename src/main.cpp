@@ -225,24 +225,31 @@ int main()
         // Clean the back buffer and depth buffer
         glClearStencil(0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glEnable(GL_STENCIL_TEST);
 
-        // 1. Setup global state
+        // Setup global state
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-        glEnable(GL_DEPTH_TEST); // This is done after stencil TESTing. I can use gl_FragCoord in fragment shader
-                                 // use z value
-        glDepthFunc(GL_LESS);    // Standard depth test
-
-        glEnable(GL_CULL_FACE);
-        // BACK LOGIC
-        glCullFace(GL_FRONT); // SEES INSIDE
-        glFrontFace(GL_CCW);
 
         // OUTER CUBE SHELL BACK
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        // CULLING
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT); // SEES INSIDE
+        glFrontFace(GL_CCW);
+        // END OF CULLING
+
+        // START OF DEPTH
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
         glDepthMask(GL_TRUE);
+        // END DEPTH
+
+        // START OF STENCILS
+        glEnable(GL_STENCIL_TEST);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        // END OF STENCILS
+
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
         planets.use();
         glBindVertexArray(PlanetsVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -253,8 +260,28 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(planets.ID, "model"), 1, GL_FALSE, &model[0][0]);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        // purple plane back
+        // BEHIND PURPLE PLANE
+
+        // START OF CULLING
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT); // SEES INSIDE
+        glFrontFace(GL_CCW);
+        // END OF CULLING
+
+        // START OF DEPTH
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glDepthMask(GL_TRUE);
+        // END DEPTH
+
+        // START OF STENCILS
+        glEnable(GL_STENCIL_TEST);
+        glStencilMask(0x00);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        // END OF STENCILS
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
         planets.use();
         glBindVertexArray(customVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -266,13 +293,28 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 24);
 
         // PURPLE PLANES FRONT
+
+        // CULLING
         glEnable(GL_CULL_FACE);
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
+        // END OF CULLING
+
+        // START OF DEPTH
+        glDepthMask(GL_FALSE);   // DONT UPDATE BUFFER
+        glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
+        glDepthFunc(GL_LESS);
+        // END DEPTH
+
+        // START OF STENCILS
+        glEnable(GL_STENCIL_TEST);
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glDepthMask(GL_FALSE);
+        // END OF STENCILS
+
+        // glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
         planets.use();
         glBindVertexArray(customVAO);
         glActiveTexture(GL_TEXTURE0);
@@ -284,12 +326,23 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 24);
 
         // OUTER CUBE SHELL FRONT
-        glDisable(GL_CULL_FACE);
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
+        // CULLING
+        glDisable(GL_CULL_FACE);
+        // END OF CULLING
+
+        // START OF DEPTH
         glDepthMask(GL_TRUE);
+        glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
+        glDepthFunc(GL_LESS);
+        // END DEPTH
+
+        // START OF STENCILS
+        glEnable(GL_STENCIL_TEST);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        // END OF STENCILS
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
         planets.use();
         glBindVertexArray(PlanetsVAO);
