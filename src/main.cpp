@@ -326,6 +326,8 @@ void draw(Shader shadername, GLuint VAOname, unsigned int DiffuseMapname, int ve
     shadername.setVec3("viewPos", camera.Position);
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(1.0f));
+    model = glm::rotate(model, (float)glfwGetTime() * 2.5f, glm::vec3(0.0, 1.0, 0.0));
+
     glUniformMatrix4fv(glGetUniformLocation(shadername.ID, "model"), 1, GL_FALSE, &model[0][0]);
     glDrawArrays(GL_TRIANGLES, 0, verticesCount);
 }
