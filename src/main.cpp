@@ -318,7 +318,7 @@ void draw(Shader shadername, GLuint VAOname, unsigned int DiffuseMapname, int ve
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::scale(model, glm::vec3(1.0f));
     glUniformMatrix4fv(glGetUniformLocation(shadername.ID, "model"), 1, GL_FALSE, &model[0][0]);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, verticesCount);
 }
 
 void processInput(GLFWwindow *window)
