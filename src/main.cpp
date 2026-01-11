@@ -233,19 +233,6 @@ int main()
         glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
         glDepthFunc(GL_LESS);
         glEnable(GL_STENCIL_TEST);
-        // TWO PASS STRATEGY. INTERIOR FIRST AND EXTERIOR
-        //  INTERIOR WINDOW
-        // glEnable(GL_CULL_FACE);
-        // glCullFace(GL_FRONT); // SEES interior
-        // glFrontFace(GL_CCW);
-        // glEnable(GL_DEPTH_TEST);
-        // glDepthFunc(GL_LESS);
-        // glDepthMask(GL_FALSE); // DONT UPDATE BUFFER
-        // glEnable(GL_STENCIL_TEST);
-        // glStencilMask(0x00);
-        // glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        // draw(planets, customVAO, WindowDiffuseMap, 24);
-
         // INTERIOR WALLS
         glEnable(GL_CULL_FACE);
         glCullFace(GL_FRONT); // discard the front facing triangles and only render the back facing ones.
