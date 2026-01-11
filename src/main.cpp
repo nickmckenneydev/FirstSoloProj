@@ -261,6 +261,7 @@ int main()
         glCullFace(GL_BACK); // Back faces are discarded
         glFrontFace(GL_CCW);
         glDepthMask(GL_FALSE); // DONT UPDATE BUFFER
+
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
