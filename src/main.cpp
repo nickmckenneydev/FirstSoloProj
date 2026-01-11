@@ -230,6 +230,9 @@ int main()
 
         // Setup global state
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
+        glDepthFunc(GL_LESS);
+        glEnable(GL_STENCIL_TEST);
         // TWO PASS STRATEGY. INTERIOR FIRST AND EXTERIOR
         //  INTERIOR WINDOW
         // glEnable(GL_CULL_FACE);
@@ -245,12 +248,9 @@ int main()
 
         // INTERIOR WALLS
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_FRONT); // SEES interior
+        glCullFace(GL_FRONT); // discard the front facing triangles and only render the back facing ones.
         glFrontFace(GL_CCW);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
         glDepthMask(GL_FALSE); // DONT UPDATE BUFFER
-        glEnable(GL_STENCIL_TEST);
         glStencilMask(0x00);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -258,23 +258,17 @@ int main()
 
         // EXTERIOR WINDOW
         glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
+        glCullFace(GL_BACK); // Back faces are discarded
         glFrontFace(GL_CCW);
-        glDepthMask(GL_FALSE);   // DONT UPDATE BUFFER
-        glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
-        glDepthFunc(GL_LESS);
-        glEnable(GL_STENCIL_TEST);
+        glDepthMask(GL_FALSE); // DONT UPDATE BUFFER
         glStencilMask(0xFF);
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         draw(planets, customVAO, WindowDiffuseMap, 24);
 
         // EXTERIOR WALLS
-        glDisable(GL_CULL_FACE);
+        glDisable(GL_CULL_FACE); // render everything front and back
         glDepthMask(GL_TRUE);    // update buffer
-        glEnable(GL_DEPTH_TEST); // MAKE IT SO THINGS DONT SHOW THROUGH WALLS
-        glDepthFunc(GL_LESS);
-        glEnable(GL_STENCIL_TEST);
         glStencilMask(0x00);
         glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
